@@ -1,6 +1,5 @@
 package byurens.entities;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -17,7 +16,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -42,7 +40,7 @@ public class Product {
     @ManyToOne
     @NotNull
     @JsonBackReference
-    @JoinColumn(nullable = false)
+    @JoinColumn(nullable = false, name = "category_id")
     private Category category;
 
     @Column(nullable = false, name = "is_available")
