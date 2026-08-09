@@ -3,6 +3,8 @@ package byurens.entities;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import byurens.enums.Size;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,6 +36,7 @@ public class ProductVariant {
 
     @ManyToOne
     @NotNull
+    @JsonBackReference
     @JoinColumn(nullable = false, name = "product_id")
     private Product product;
 
