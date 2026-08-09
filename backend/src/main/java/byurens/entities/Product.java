@@ -40,31 +40,13 @@ public class Product {
     private String name;
 
     @ManyToOne
-    @NotBlank
+    @NotNull
     @JsonBackReference
     @JoinColumn(nullable = false)
-    private String category;
-
-    @NotNull
-    @DecimalMin(value = "0.0", inclusive = false, message = "Price can't be minus")
-    @Column(nullable = false)
-    private BigDecimal price;
-
-    @NotNull
-    @DecimalMin(value = "0.0", inclusive = false, message = "Price can't be minus")
-    @Column(nullable = false, name = "on_sale")
-    private BigDecimal onSale;
-
-    @NotNull
-    @DecimalMin(value = "0.0", inclusive = false, message = "Price can't be minus")
-    @Column(nullable = false)
-    private BigDecimal capital;
+    private Category category;
 
     @Column(nullable = false, name = "is_available")
     private boolean isAvailable;
-
-    @Column(nullable = false, name = "is_promo")
-    private boolean isPromo;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false, name = "created_at")
