@@ -1,6 +1,7 @@
 package byurens.entities;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -60,7 +61,7 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private List<ProductVariant> variants;
+    private List<ProductVariant> variants = new ArrayList<>();
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false, name = "created_at")

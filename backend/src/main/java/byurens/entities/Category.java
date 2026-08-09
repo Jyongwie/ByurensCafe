@@ -1,5 +1,6 @@
 package byurens.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,6 +47,6 @@ public class Category {
     
     @OneToMany(mappedBy = "category")
     @JsonManagedReference
-    private List<Product> products;
+    private List<Product> products = new ArrayList<>();
 
 }
