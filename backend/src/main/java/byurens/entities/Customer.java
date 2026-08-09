@@ -12,6 +12,7 @@ import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -38,11 +39,12 @@ public class Customer {
     private String name;
 
     @NotNull
-    @Column(nullable = false)
+    @Min(0)
+    @Column(nullable = false, name = "loyalty_point")
     private int loyaltyPoint;
 
     @NotNull
-    @DecimalMin(value = "0.0")
+    @DecimalMin(value = "0.0", inclusive = false, message = "Balance can't be minus")
     @Column(nullable = false, name = "wallet_balance")
     private BigDecimal walletBalance;
 }
