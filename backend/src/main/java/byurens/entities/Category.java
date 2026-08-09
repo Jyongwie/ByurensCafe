@@ -44,7 +44,7 @@ public class Category {
     @Column(nullable = false, name = "task_target")
     private TaskTarget taskTarget;
     
-    @OneToMany(mappedBy = "categories")
+    @OneToMany(mappedBy = "category")
     @JsonManagedReference
     private List<Product> products;
 
