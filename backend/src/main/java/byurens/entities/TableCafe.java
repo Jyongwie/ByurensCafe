@@ -1,0 +1,56 @@
+package byurens.entities;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import byurens.enums.TableStatus;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Table(name = "Tables_Cafe")
+@Getter
+@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class TableCafe {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
+    @NotBlank
+    @Column(nullable = false, name = "table_identifier")
+    private String tableIdentifier;
+
+    @Min(1)
+    @NotNull
+    @Column(nullable = false)
+    private Integer capacity;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TableStatus status;
+
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false, name = "created_at")
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(nullable = false, name = "updated_at")
+    private LocalDateTime updatedAt;
+}
