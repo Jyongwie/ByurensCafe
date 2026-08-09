@@ -10,9 +10,12 @@ import org.hibernate.annotations.UpdateTimestamp;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import byurens.enums.ProductType;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -40,6 +43,11 @@ public class Product {
     @NotBlank
     @Column(nullable = false)
     private String name;
+
+    @NotBlank
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, name = "product_type")
+    private ProductType productType;
 
     @ManyToOne
     @NotNull

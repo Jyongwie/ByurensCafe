@@ -18,6 +18,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -40,6 +41,7 @@ public class ProductVariant {
     @JoinColumn(nullable = false, name = "product_id")
     private Product product;
 
+    @NotBlank
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Size size;
