@@ -1,11 +1,14 @@
 package byurens.entities;
 
+import java.beans.Transient;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import byurens.enums.UnitMeasurement;
 import jakarta.persistence.Column;
@@ -16,6 +19,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -45,12 +49,15 @@ public class InventoryItem {
     @NotNull
     @DecimalMin(value = "0.0", message = "Quantity can't be negative")
     @Column(nullable = false, name = "current_stock")
-    private BigDecimal currentStock;
+    private BigDecimal currentStock = BigDecimal.ZERO;
 
     @NotNull
     @DecimalMin(value = "0.0", message = "Quantity can't be negative")
     @Column(nullable = false, name = "low_stock_threshold")
-    private BigDecimal lowStockThreshold;
+    private BigDecimal lowStockThreshold = BigDecimal.ZERO;
+
+    @Version
+    private Long version;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false, name = "created_at")
@@ -59,4 +66,10 @@ public class InventoryItem {
     @UpdateTimestamp
     @Column(nullable = false, name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Transient
+    @JsonIgnore
+    public boolean isLowStock() {
+        return this.currentStock.compareTo(this.lowStockThreshold) <= 0;
+    }
 }
