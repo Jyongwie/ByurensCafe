@@ -6,7 +6,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import byurens.entities.Product;
-import byurens.exception.ProductException;
+import byurens.exception.ByurensCafeException;
 import byurens.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -21,7 +21,7 @@ public class ProductService {
 
     public Product updateProduct(UUID id, Product product) {
         Product existingProduct = productRepository.findById(id)
-            .orElseThrow(() -> new ProductException("Product not found"));
+            .orElseThrow(() -> new ByurensCafeException("Product not found"));
 
         existingProduct.setName(product.getName());
         existingProduct.setProductType(product.getProductType());
@@ -39,6 +39,6 @@ public class ProductService {
 
     public Product getProductById(UUID id) {
         return productRepository.findById(id)
-            .orElseThrow(() -> new ProductException("Product not found"));
+            .orElseThrow(() -> new ByurensCafeException("Product not found"));
     }
 }   
