@@ -46,7 +46,6 @@ public class ProductVariant {
     @JoinColumn(nullable = false, name = "product_id")
     private Product product;
 
-    @NotBlank
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Size size;

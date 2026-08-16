@@ -47,7 +47,6 @@ public class Product {
     @Column(nullable = false)
     private String name;
 
-    @NotBlank
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "product_type")
     private ProductType productType;

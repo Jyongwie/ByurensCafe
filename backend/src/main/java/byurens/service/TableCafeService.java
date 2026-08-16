@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import byurens.entities.TableCafe;
 import byurens.exception.ByurensCafeException;
@@ -15,10 +16,12 @@ import lombok.RequiredArgsConstructor;
 public class TableCafeService {
     private final TableCafeRepository tableCafeRepository;
 
+    @Transactional
     public TableCafe createTableCafe(TableCafe tableCafe) {
         return tableCafeRepository.save(tableCafe);
     }
 
+    @Transactional
     public TableCafe updateTableCafe(UUID id, TableCafe tableCafe) {
         TableCafe existingTable = tableCafeRepository.findById(id)
             .orElseThrow(() -> new ByurensCafeException("Table not found"));
