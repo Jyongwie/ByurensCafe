@@ -15,6 +15,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -45,6 +46,9 @@ public class TableCafe {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TableStatus status;
+
+    @Version
+    private Long version;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false, name = "created_at")
