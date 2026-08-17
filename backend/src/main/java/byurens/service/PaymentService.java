@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class PaymentOrderService {
+public class PaymentService {
     private final OrderRepository orderRepository;
 
     @Transactional
