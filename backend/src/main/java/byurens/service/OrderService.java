@@ -14,6 +14,7 @@ import byurens.entities.OrderItem;
 import byurens.entities.OrderItemAddOn;
 import byurens.entities.ProductVariant;
 import byurens.entities.TableCafe;
+import byurens.enums.OrderStatus;
 import byurens.enums.TableStatus;
 import byurens.exception.ByurensCafeException;
 import byurens.repository.AddOnRepository;
@@ -101,6 +102,26 @@ public class OrderService {
 
         order.setTotalAmount(grandTotal);
         
+        return orderRepository.save(order);
+    }
+
+    public Order updateOrderStatus(UUID orderId, OrderStatus newStatus) {
+        Order order = orderRepository.findById(orderId)
+            .orElseThrow(() -> new ByurensCafeException("Order not found"));
+
+        if (order.getOrderStatus() == OrderStatus.COMPLETED || order.getOrderStatus() == OrderStatus.CANCELLED) {
+            throw new ByurensCafeException("Cannot change the order status that already " + order.getOrderStatus());
+        }
+
+        order.setOrderStatus(newStatus);
+
+        if (newStatus == OrderStatus.COMPLETED || newStatus == OrderStatus.CANCELLED) {
+            if (order.getTable() != null) {
+                TableCafe tableCafe = order.getTable();
+                tableCafe.setStatus(TableStatus.AVAILABLE);
+            }
+        }
+
         return orderRepository.save(order);
     }
 
