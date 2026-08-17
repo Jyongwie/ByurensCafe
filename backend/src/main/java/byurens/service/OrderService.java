@@ -105,6 +105,7 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
+    @Transactional
     public Order updateOrderStatus(UUID orderId, OrderStatus newStatus) {
         Order order = orderRepository.findById(orderId)
             .orElseThrow(() -> new ByurensCafeException("Order not found"));
