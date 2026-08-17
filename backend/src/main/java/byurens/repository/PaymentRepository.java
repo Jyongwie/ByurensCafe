@@ -11,5 +11,5 @@ import byurens.enums.PaymentStatus;
 
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment, UUID> {
-    List<Payment> findByOrderIdAndStatus(UUID orderId, PaymentStatus status);
+    List<Payment> findAllByOrderIdAndStatus(UUID orderId, PaymentStatus status);
 }
