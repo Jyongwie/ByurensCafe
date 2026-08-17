@@ -30,6 +30,8 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -38,6 +40,8 @@ import lombok.Setter;
 @Table(name = "Orders")
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Order {
     @Id
@@ -60,10 +64,12 @@ public class Order {
     @Column(nullable = false, name = "order_type")
     private OrderType orderType;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "order_status")
     private OrderStatus orderStatus = OrderStatus.PENDING;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "payment_status")
     private PaymentStatus paymentStatus = PaymentStatus.UNPAID;
@@ -72,6 +78,7 @@ public class Order {
     @Column(nullable = false, name = "total_amount")
     private BigDecimal totalAmount;
 
+    @Builder.Default
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<OrderItem> orderItems = new ArrayList<>();
