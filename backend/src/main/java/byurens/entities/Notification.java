@@ -16,6 +16,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,6 +26,8 @@ import lombok.Setter;
 @Table(name = "Notifications")
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Notification {
     @Id
@@ -42,16 +46,11 @@ public class Notification {
     @Column(nullable = false)
     private String message;
 
+    @Builder.Default
     @Column(nullable = false, name = "is_read")
     private boolean isRead = false;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false, name = "created_at")
     private LocalDateTime createdAt;
-
-    public Notification(Staff recipient, String title, String message) {
-        this.recipient = recipient;
-        this.title = title;
-        this.message = message;
-    }
 }

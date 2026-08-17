@@ -28,7 +28,11 @@ public class NotificationService {
             List<Notification> notifications = new ArrayList<>();
 
             for (Staff staff : recipients) {
-                Notification notification = new Notification(staff, title, message);
+                Notification notification = Notification.builder()
+                    .recipient(staff)
+                    .title(title)
+                    .message(message)
+                    .build();
                 notifications.add(notification);
             }
 
@@ -42,6 +46,5 @@ public class NotificationService {
             .orElseThrow(() -> new ByurensCafeException("Notification not found"));
 
         notification.setRead(true);
-        notificationRepository.save(notification);
     }
 }
