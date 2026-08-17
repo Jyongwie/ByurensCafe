@@ -23,7 +23,7 @@ public class GlobalNotFoundExceptionHandler {
             "This record was just updated by another staff member. Please refresh the page and try again",
             LocalDateTime.now()
         );
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
     @ExceptionHandler(exception = ByurensCafeException.class)
