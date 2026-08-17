@@ -23,6 +23,8 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -31,6 +33,8 @@ import lombok.Setter;
 @Table(name = "Order_Items")
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrderItem {
     @Id
@@ -68,6 +72,7 @@ public class OrderItem {
     @Column(nullable = false, name = "total_price")
     private BigDecimal totalPrice;
 
+    @Builder.Default
     @OneToMany(mappedBy = "orderItem", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<OrderItemAddOn> selectedAddOns = new ArrayList<>();
