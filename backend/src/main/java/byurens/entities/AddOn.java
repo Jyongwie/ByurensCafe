@@ -45,12 +45,12 @@ public class AddOn {
     @Column(nullable = false)
     private String name;
 
-    @NotBlank
+    @NotNull
     @DecimalMin(value = "0.0", message = "price can't be negative")
     @Column(nullable = false)
     private BigDecimal price;
 
-    @NotBlank
+    @NotNull
     @DecimalMin(value = "0.0", message = "cost can't be negative")
     @Column(nullable = false)
     private BigDecimal capital;

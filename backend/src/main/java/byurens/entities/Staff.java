@@ -17,6 +17,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,12 +45,12 @@ public class Staff {
     @Column(nullable = false)
     private Role role;
 
-    @NotBlank
+    @NotNull
     @DecimalMin(value = "0.0", inclusive = false, message = "initial hourly pay can't be minus")
     @Column(nullable = false, name = "hourly_rate",scale = 2)
     private BigDecimal hourlyRate;
 
-    @NotBlank
+    @NotNull
     @Column(nullable = false, name = "hire_date")
     private LocalDate hireDate;
 }

@@ -54,7 +54,7 @@ public class OrderItem {
     @Column(nullable = false, name = "product_name")
     private String productName;
 
-    @NotNull
+    @NotBlank
     @Column(nullable = false, name = "size_name")
     private String sizeName;
 

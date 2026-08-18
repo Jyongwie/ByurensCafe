@@ -31,7 +31,7 @@ public class User {
     private UUID id;
 
     @Email
-    @NotNull
+    @NotBlank
     @Column(nullable = false, unique = true)
     private String email;
 
@@ -39,13 +39,13 @@ public class User {
     @Column(nullable = false, name = "password_hash")
     private String passwordHash;
 
-    @NotNull
+    @NotBlank
     @Column(nullable = false, name = "phone_number")
     private String phoneNumber;
 
     @NotNull
     @Column(nullable = false, name = "is_active")
-    private boolean isActive;
+    private Boolean isActive;
 
     @Column(name = "is_email_verified")
     private boolean isEmailVerified = false;
