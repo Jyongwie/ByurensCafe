@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import byurens.dto.PaymentRequest;
+import byurens.dto.RefundRequest;
 import byurens.entities.Order;
 import byurens.entities.Payment;
 import byurens.enums.OrderStatus;
@@ -63,5 +64,47 @@ public class PaymentService {
         }
 
         return newPayment;
+    }
+
+    public Payment processRefund(RefundRequest request) {
+        Order order = orderRepository.findById(request.orderId())
+            .orElseThrow(() -> new ByurensCafeException("Order not found"));
+
+        List<Payment> successfulPayments = paymentRepository.findAllByOrderIdAndStatus(
+            order.getId(), 
+            PaymentStatus.PAID
+        );
+
+        // BigDecimal totalPaid = BigDecimal.ZERO;
+
+        // for (Payment payment : successfulPayments) {
+        //     totalPaid = totalPaid.add(payment.getAmount());
+        // }
+        BigDecimal totalPaid = successfulPayments.stream()
+            .map(Payment::getAmount)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        if (request.refundAmount().compareTo(totalPaid) > 0) {
+            throw new ByurensCafeException("Cannot refund: " + request.refundAmount() + " . Only " + totalPaid + " has been paid");
+        }
+
+        Payment refundRecord = Payment.builder()
+            .order(order)
+            .amount(request.refundAmount())
+            .status(PaymentStatus.REFUNDED)
+            .build();
+
+        paymentRepository.save(refundRecord);
+
+        if (request.refundAmount().compareTo(totalPaid) == 0) {
+            order.setPaymentStatus(PaymentStatus.REFUNDED);
+            order.setOrderStatus(OrderStatus.CANCELLED);
+
+            if (order.getTable() != null) {
+                order.getTable().setStatus(TableStatus.AVAILABLE);
+            }
+        }
+
+        return refundRecord;
     }
 }
