@@ -16,6 +16,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,6 +26,8 @@ import lombok.Setter;
 @Table(name = "Users")
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
     @Id
@@ -47,9 +51,11 @@ public class User {
     @Column(nullable = false, name = "is_active")
     private Boolean isActive;
 
+    @Builder.Default
     @Column(name = "is_email_verified")
     private boolean isEmailVerified = false;
 
+    @Builder.Default
     @Column(name = "is_phone_number_verified")
     private boolean isPhoneNumberVerified = false;
 
