@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import byurens.dto.PaymentRequest;
 import byurens.dto.RefundRequest;
@@ -15,7 +16,6 @@ import byurens.enums.TableStatus;
 import byurens.exception.ByurensCafeException;
 import byurens.repository.OrderRepository;
 import byurens.repository.PaymentRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -66,6 +66,7 @@ public class PaymentService {
         return newPayment;
     }
 
+    @Transactional
     public Payment processRefund(RefundRequest request) {
         Order order = orderRepository.findById(request.orderId())
             .orElseThrow(() -> new ByurensCafeException("Order not found"));

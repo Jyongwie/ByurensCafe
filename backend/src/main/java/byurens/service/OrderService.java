@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import byurens.dto.OrderItemRequest;
 import byurens.dto.OrderRequest;
@@ -22,7 +23,6 @@ import byurens.repository.CustomerRepository;
 import byurens.repository.OrderRepository;
 import byurens.repository.ProductVariantRepository;
 import byurens.repository.TableCafeRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service

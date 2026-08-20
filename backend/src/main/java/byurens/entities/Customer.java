@@ -42,13 +42,15 @@ public class Customer {
     @Column(nullable = false)
     private String name;
 
+    @Builder.Default
     @NotNull
     @Min(0)
     @Column(nullable = false, name = "loyalty_point")
-    private int loyaltyPoint;
+    private int loyaltyPoint = 0;
 
+    @Builder.Default
     @NotNull
-    @DecimalMin(value = "0.0", inclusive = false, message = "Balance can't be minus")
+    @DecimalMin(value = "0.0", message = "Balance can't be minus")
     @Column(nullable = false, name = "wallet_balance")
-    private BigDecimal walletBalance;
+    private BigDecimal walletBalance = BigDecimal.ZERO;
 }
