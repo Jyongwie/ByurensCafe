@@ -31,5 +31,5 @@ public record HireStaffRequest(
     BigDecimal hourlyRate,
 
     @NotNull(message = "hire date is required")
-    LocalDate hirDate
+    LocalDate hireDate
 ) {}

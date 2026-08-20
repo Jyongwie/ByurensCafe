@@ -36,7 +36,7 @@ public class StaffService {
             .name(request.name())
             .role(request.role())
             .hourlyRate(request.hourlyRate())
-            .hireDate(request.hirDate())
+            .hireDate(request.hireDate())
             .build();
 
         return staffRepository.save(staff);
