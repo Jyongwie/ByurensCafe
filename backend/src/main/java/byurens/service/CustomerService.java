@@ -1,5 +1,6 @@
 package byurens.service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 public class CustomerService {
     private final UserRepository userRepository;
     private final CustomerRepository customerRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public Customer newCustomer(NewCustomerRequest request) {
@@ -25,7 +27,7 @@ public class CustomerService {
 
         User user = User.builder()
             .email(request.email())
-            .passwordHash(request.rawPassword())
+            .passwordHash(passwordEncoder.encode(request.rawPassword()))
             .phoneNumber(request.phoneNumber())
             .isActive(true)
             .build();
