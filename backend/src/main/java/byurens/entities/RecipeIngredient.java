@@ -40,7 +40,7 @@ public class RecipeIngredient {
     private ProductVariant productVariant;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(nullable = false, name = "inventory_item")
+    @JoinColumn(nullable = false, name = "inventory_item")
     private InventoryItem inventoryItem;
 
     @NotNull
