@@ -47,9 +47,9 @@ public class User {
     @Column(nullable = false, name = "phone_number")
     private String phoneNumber;
 
-    @NotNull
-    @Column(nullable = false, name = "is_active")
-    private Boolean isActive;
+    @Builder.Default
+    @Column(name = "is_active")
+    private boolean isActive = true;
 
     @Builder.Default
     @Column(name = "is_email_verified")

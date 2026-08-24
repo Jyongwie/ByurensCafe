@@ -29,7 +29,6 @@ public class CustomerService {
             .email(request.email())
             .passwordHash(passwordEncoder.encode(request.rawPassword()))
             .phoneNumber(request.phoneNumber())
-            .isActive(true)
             .build();
 
         User savedUser = userRepository.save(user);

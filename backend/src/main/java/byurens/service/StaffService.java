@@ -28,7 +28,6 @@ public class StaffService {
         User user = User.builder()
             .email(request.email())
             .phoneNumber(request.phoneNumber())
-            .isActive(true)
             .passwordHash(passwordEncoder.encode(request.rawPassword()))
             .build();
 
