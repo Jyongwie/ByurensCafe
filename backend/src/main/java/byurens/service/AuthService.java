@@ -9,6 +9,7 @@ import byurens.dto.LoginRequest;
 import byurens.dto.LoginResponse;
 import byurens.entities.Staff;
 import byurens.entities.User;
+import byurens.enums.Role;
 import byurens.exception.ByurensCafeException;
 import byurens.repository.StaffRepository;
 import byurens.repository.UserRepository;
@@ -34,14 +35,16 @@ public class AuthService {
             throw new ByurensCafeException("This account has been disable");
         }
 
-        String role = "CUSTOMER";
+        String defaultRole = "CUSTOMER";
+        Role role = null;
         Optional<Staff> staff = staffRepository.findById(user.getId());
 
         if (staff.isPresent()) {
-            role = staff.get().getRole().name();
+            role = staff.get().getRole();
+            defaultRole = role.name();
         }
 
-        String token = jwtService.generateToken(user, role);
+        String token = jwtService.generateToken(user, defaultRole);
         return new LoginResponse(token, role);
     }
 }
