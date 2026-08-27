@@ -1,5 +1,6 @@
 package byurens.dto;
 
+import java.util.List;
 import java.util.UUID;
 
 import byurens.enums.ProductType;
@@ -16,5 +17,8 @@ public record ProductRequest(
     @NotNull(message = "Category ID is required")
     UUID categoryId,
     
-    boolean isAvailable
+    boolean isAvailable,
+
+    List<ProductVariantRequest> variants,
+    List<AddOnGroupRequest> addOnGroups
 ) {}
