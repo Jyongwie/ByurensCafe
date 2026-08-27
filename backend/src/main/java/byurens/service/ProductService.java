@@ -6,8 +6,12 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import byurens.dto.ProductRequest;
+import byurens.dto.ProductResponse;
+import byurens.entities.Category;
 import byurens.entities.Product;
 import byurens.exception.ByurensCafeException;
+import byurens.repository.CategoryRepository;
 import byurens.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -15,10 +19,23 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
 
     @Transactional
-    public Product createProduct(Product product) {
-        return productRepository.save(product);
+    public ProductResponse createProduct(ProductRequest request) {
+        Category category = categoryRepository.findById(request.categoryId())
+            .orElseThrow(() -> new ByurensCafeException("Category not found"));
+
+        Product product = Product.builder()
+            .name(request.name())
+            .productType(request.productType())
+            .category(category)
+            .isAvailable(request.isAvailable())
+            .build();
+
+        Product savedProduct = productRepository.save(product);
+
+        return mapToResponse(savedProduct);
     }
 
     @Transactional
@@ -54,5 +71,15 @@ public class ProductService {
     public Product getProductById(UUID id) {
         return productRepository.findById(id)
             .orElseThrow(() -> new ByurensCafeException("Product not found"));
+    }
+
+    private ProductResponse mapToResponse(Product product) {
+        return new ProductResponse(
+            product.getId(),
+            product.getName(),
+            product.getProductType(),
+            product.getCategory().getLabel(),
+            product.isAvailable()
+        );
     }
 }   
