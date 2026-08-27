@@ -25,6 +25,8 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -33,6 +35,8 @@ import lombok.Setter;
 @Table(name = "Product_Variants")
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProductVariant {
     @Id
@@ -69,9 +73,11 @@ public class ProductVariant {
     @Column(nullable = false)
     private BigDecimal capital;
 
+    @Builder.Default
     @Column(nullable = false, name = "is_promo")
     private boolean isPromo = false;
 
+    @Builder.Default
     @OneToMany(mappedBy = "productVariant", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<RecipeIngredient> recipeIngredients = new ArrayList<>();
