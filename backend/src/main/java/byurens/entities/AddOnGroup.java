@@ -21,6 +21,8 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,12 +31,15 @@ import lombok.Setter;
 @Table(name = "Add_On_Groups")
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AddOnGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Builder.Default
     @OneToMany(mappedBy = "addOnGroup", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<AddOn> addOns = new ArrayList<>();
