@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import byurens.dto.OrderItemRequest;
 import byurens.dto.OrderRequest;
+import byurens.dto.OrderResponse;
 import byurens.entities.AddOn;
 import byurens.entities.Customer;
 import byurens.entities.Order;
@@ -35,7 +36,7 @@ public class OrderService {
     private final AddOnRepository addOnRepository;
 
     @Transactional
-    public Order createOrder(OrderRequest request) {
+    public OrderResponse createOrder(OrderRequest request) {
         Order order = Order.builder()
             .orderNumber(generateOrderNumber())
             .orderType(request.orderType())
@@ -56,6 +57,7 @@ public class OrderService {
             }
 
             order.setTable(tableCafe);
+            tableCafe.setStatus(TableStatus.OCCUPIED);
         }
 
         BigDecimal grandTotal = BigDecimal.ZERO;
@@ -101,8 +103,10 @@ public class OrderService {
         }
 
         order.setTotalAmount(grandTotal);
+
+        Order savedOrder = orderRepository.save(order);
         
-        return orderRepository.save(order);
+        return mapToResponse(savedOrder);
     }
 
     @Transactional
@@ -128,5 +132,27 @@ public class OrderService {
 
     private String generateOrderNumber() {
         return "Byu-" + UUID.randomUUID().toString().substring(0, 5).toUpperCase();
+    }
+
+    private OrderResponse mapToResponse(Order order) {
+        String customerName = (order.getCustomer() != null)
+            ? order.getCustomer().getName()
+            : "Walk-in Customer";
+
+        String tableIdentifier = (order.getTable() != null)
+            ? order.getTable().getTableIdentifier()
+            : "Takeaway";
+        return new OrderResponse(
+            order.getId(),
+            order.getOrderNumber(),
+            customerName,
+            tableIdentifier,
+            order.getOrderType(),
+            order.getOrderStatus(),
+            order.getPaymentStatus(),
+            order.getTotalAmount(),
+            order.getCreatedAt(),
+            null
+        );
     }
 }
