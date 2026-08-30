@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
+import org.aspectj.weaver.ast.Or;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,7 +56,7 @@ public class OrderService {
             TableCafe tableCafe = tableCafeRepository.findById(request.tableId())
                 .orElseThrow(() -> new ByurensCafeException("Table not found"));
             
-            if (tableCafe.getStatus() == TableStatus.OCCUPIED) {
+            if (tableCafe.getStatus() == TableStatus.OCCUPIED || tableCafe.getStatus() == TableStatus.RESERVED) {
                 throw new  ByurensCafeException("Table " + tableCafe.getTableIdentifier() + " not available");
             }
 
@@ -131,6 +132,82 @@ public class OrderService {
         }
 
         Order savedOrder = orderRepository.save(order);
+        return mapToResponse(savedOrder);
+    }
+
+    @Transactional
+    public OrderResponse updateOrder(UUID orderId, OrderRequest request) {
+        Order order = orderRepository.findById(orderId)
+            .orElseThrow(() -> new ByurensCafeException("Order not found"));
+
+        if (order.getOrderStatus() != OrderStatus.PENDING) {
+            throw new ByurensCafeException("Only order with PENDING status that can be edit");
+        }
+        order.setOrderType(request.orderType());
+        if (request.customerId() != null) {
+            Customer customer = customerRepository.findById(request.customerId())
+                .orElseThrow(() -> new ByurensCafeException("Customer not found"));
+            order.setCustomer(customer);
+        } else {
+            order.setCustomer(null);
+        }
+
+        if (order.getTable() != null && (request.tableId() == null || !order.getTable().getId().equals(request.tableId()))) {
+            order.getTable().setStatus(TableStatus.AVAILABLE);
+            order.setTable(null);
+        }
+
+        if (request.tableId() != null) {
+            TableCafe newTable = tableCafeRepository.findById(request.tableId())
+                .orElseThrow(() -> new ByurensCafeException("Table not found"));
+            if ((newTable.getStatus() == TableStatus.OCCUPIED || newTable.getStatus() == TableStatus.RESERVED) && (order.getTable() == null || !order.getTable().getId().equals(newTable.getId()))) {
+                throw new ByurensCafeException("Table " + newTable.getTableIdentifier() + " is not available");
+            }
+            newTable.setStatus(TableStatus.OCCUPIED);
+            order.setTable(newTable);
+        }
+        order.getOrderItems().clear();
+        BigDecimal grandTotal = BigDecimal.ZERO;
+
+        for (OrderItemRequest itemRequest : request.items()) {
+            ProductVariant productVariant = productVariantRepository.findById(itemRequest.variantId())
+                .orElseThrow(() -> new ByurensCafeException("Variant not found"));
+            OrderItem orderItem = OrderItem.builder()
+                .order(order)
+                .variant(productVariant)
+                .productName(productVariant.getProduct().getName())
+                .sizeName(productVariant.getSize().name())
+                .basePrice(productVariant.getPrice())
+                .quantity(itemRequest.quantity())
+                .note(itemRequest.note())
+                .build();
+
+            BigDecimal addOnsTotal = BigDecimal.ZERO;
+
+            if (itemRequest.addOnsId() != null) {
+                for (UUID addOnsId : itemRequest.addOnsId()) {
+                    AddOn addOn = addOnRepository.findById(addOnsId)
+                        .orElseThrow(() -> new ByurensCafeException("Add-on not found"));
+                    OrderItemAddOn orderItemAddOn = OrderItemAddOn.builder()
+                        .orderItem(orderItem)
+                        .addOnName(addOn.getName())
+                        .priceCharged(addOn.getPrice())
+                        .build();
+
+                    orderItem.getSelectedAddOns().add(orderItemAddOn);
+                    addOnsTotal = addOnsTotal.add(addOn.getPrice());
+                }
+            }
+            BigDecimal unitPrice = orderItem.getBasePrice().add(addOnsTotal);
+            BigDecimal lineItemTotal = unitPrice.multiply(BigDecimal.valueOf(orderItem.getQuantity()));
+            orderItem.setTotalPrice(lineItemTotal);
+
+            order.getOrderItems().add(orderItem);
+            grandTotal = grandTotal.add(lineItemTotal);
+        }
+        order.setTotalAmount(grandTotal);
+        Order savedOrder = orderRepository.save(order);
+
         return mapToResponse(savedOrder);
     }
 
