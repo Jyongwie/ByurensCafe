@@ -113,7 +113,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order updateOrderStatus(UUID orderId, OrderStatus newStatus) {
+    public OrderResponse updateOrderStatus(UUID orderId, OrderStatus newStatus) {
         Order order = orderRepository.findById(orderId)
             .orElseThrow(() -> new ByurensCafeException("Order not found"));
 
@@ -130,7 +130,8 @@ public class OrderService {
             }
         }
 
-        return orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
+        return mapToResponse(savedOrder);
     }
 
     private String generateOrderNumber() {
