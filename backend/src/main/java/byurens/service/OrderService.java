@@ -1,12 +1,15 @@
 package byurens.service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import byurens.dto.OrderItemAddOnResponse;
 import byurens.dto.OrderItemRequest;
+import byurens.dto.OrderItemResponse;
 import byurens.dto.OrderRequest;
 import byurens.dto.OrderResponse;
 import byurens.entities.AddOn;
@@ -142,6 +145,24 @@ public class OrderService {
         String tableIdentifier = (order.getTable() != null)
             ? order.getTable().getTableIdentifier()
             : "Takeaway";
+
+        List<OrderItemResponse> itemResponses = order.getOrderItems().stream()
+            .map(item -> new OrderItemResponse(
+                item.getId(),
+                item.getVariant().getId().toString(),
+                item.getProductName(),
+                item.getSizeName(),
+                item.getBasePrice(),
+                item.getQuantity(),
+                item.getNote(),
+                item.getTotalPrice(),
+                item.getSelectedAddOns().stream()
+                    .map(addOn -> new OrderItemAddOnResponse(
+                        addOn.getId(),
+                        addOn.getAddOnName(),
+                        addOn.getPriceCharged()
+                    )).toList()
+            )).toList();
         return new OrderResponse(
             order.getId(),
             order.getOrderNumber(),
@@ -152,7 +173,7 @@ public class OrderService {
             order.getPaymentStatus(),
             order.getTotalAmount(),
             order.getCreatedAt(),
-            null
+            itemResponses
         );
     }
 }
