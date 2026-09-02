@@ -35,24 +35,33 @@ public class TableCafeService {
     }
 
     @Transactional
-    public TableCafe updateTableCafe(UUID id, TableCafe tableCafe) {
+    public TableCafeResponse updateTableCafe(UUID id, TableCafeRequest request) {
         TableCafe existingTable = tableCafeRepository.findById(id)
             .orElseThrow(() -> new ByurensCafeException("Table not found"));
 
-        existingTable.setTableIdentifier(tableCafe.getTableIdentifier());
-        existingTable.setCapacity(tableCafe.getCapacity());
-        existingTable.setStatus(tableCafe.getStatus());
+        if (!existingTable.getTableIdentifier().equals(request.tableIdentifier()) && tableCafeRepository.existsByTableIdentifier((request.tableIdentifier()))) {
+            throw new ByurensCafeException("Table identifier already exists");
+        }
 
-        return tableCafeRepository.save(existingTable);
+        existingTable.setTableIdentifier(request.tableIdentifier());
+        existingTable.setCapacity(request.capacity());
+        if (request.status() != null) {
+            existingTable.setStatus(request.status());
+        }
+        TableCafe updatedTable = tableCafeRepository.save(existingTable);
+        return mapToResponse(updatedTable);
     }
 
-    public List<TableCafe> getTableCafes() {
-        return tableCafeRepository.findAll();
+    public List<TableCafeResponse> getTableCafes() {
+        return tableCafeRepository.findAll().stream()
+            .map(this::mapToResponse)
+            .toList();
     }
 
-    public TableCafe getTableCafeById(UUID id) {
-        return tableCafeRepository.findById(id)
+    public TableCafeResponse getTableCafeById(UUID id) {
+        TableCafe tableCafe = tableCafeRepository.findById(id)
             .orElseThrow(() -> new ByurensCafeException("Table not found"));
+        return mapToResponse(tableCafe);
     }
 
     private TableCafeResponse mapToResponse(TableCafe tableCafe) {
