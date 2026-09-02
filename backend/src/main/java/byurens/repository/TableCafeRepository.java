@@ -11,4 +11,5 @@ import byurens.entities.TableCafe;
 @Repository
 public interface TableCafeRepository extends JpaRepository<TableCafe, UUID> {
     List<TableCafe> findByCapacity(Integer capacity);
+    boolean existsByTableIdentifier(String identifier);
 }
