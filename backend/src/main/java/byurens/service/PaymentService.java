@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import byurens.dto.PaymentRequest;
+import byurens.dto.PaymentResponse;
 import byurens.dto.RefundRequest;
 import byurens.entities.Order;
 import byurens.entities.Payment;
@@ -25,7 +26,7 @@ public class PaymentService {
     private final OrderRepository orderRepository;
 
     @Transactional
-    public Payment processPayment(PaymentRequest request) {
+    public PaymentResponse processPayment(PaymentRequest request) {
         Order order = orderRepository.findById(request.orderId())
             .orElseThrow(() -> new ByurensCafeException("Order not found"));
 
@@ -44,7 +45,7 @@ public class PaymentService {
             .status(PaymentStatus.PAID)
             .build();
         
-        paymentRepository.save(newPayment);
+        Payment savedPayment = paymentRepository.save(newPayment);
 
         List<Payment> successfulPayments = paymentRepository.findAllByOrderIdAndStatus(
             order.getId(),
@@ -63,11 +64,11 @@ public class PaymentService {
             }
         }
 
-        return newPayment;
+        return mapToResponse(savedPayment);
     }
 
     @Transactional
-    public Payment processRefund(RefundRequest request) {
+    public PaymentResponse processRefund(RefundRequest request) {
         Order order = orderRepository.findById(request.orderId())
             .orElseThrow(() -> new ByurensCafeException("Order not found"));
 
@@ -95,7 +96,7 @@ public class PaymentService {
             .status(PaymentStatus.REFUNDED)
             .build();
 
-        paymentRepository.save(refundRecord);
+        Payment savedRefund = paymentRepository.save(refundRecord);
 
         if (request.refundAmount().compareTo(totalPaid) == 0) {
             order.setPaymentStatus(PaymentStatus.REFUNDED);
@@ -106,6 +107,17 @@ public class PaymentService {
             }
         }
 
-        return refundRecord;
+        return mapToResponse(savedRefund);
+    }
+
+    private PaymentResponse mapToResponse(Payment payment) {
+        return new PaymentResponse(
+            payment.getId(),
+            payment.getAmount(),
+            payment.getMethod(),
+            payment.getTransactionReference(),
+            payment.getStatus(),
+            payment.getCreatedAt()
+        );
     }
 }
