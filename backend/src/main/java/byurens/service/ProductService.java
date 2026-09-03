@@ -85,13 +85,15 @@ public class ProductService {
         return mapToResponse(savedProduct);
     }
 
-    public List<Product> getProducts() {
-        return productRepository.findAll();
+    public List<ProductResponse> getProducts() {
+        return productRepository.findAll().stream()
+            .map(this::mapToResponse).toList();
     }
 
-    public Product getProductById(UUID id) {
-        return productRepository.findById(id)
+    public ProductResponse getProductById(UUID id) {
+        Product product = productRepository.findById(id)
             .orElseThrow(() -> new ByurensCafeException("Product not found"));
+        return mapToResponse(product);
     }
 
     private ProductResponse mapToResponse(Product product) {
