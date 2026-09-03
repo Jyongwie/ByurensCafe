@@ -9,6 +9,7 @@ import byurens.enums.PaymentStatus;
 
 public record PaymentResponse(
     UUID id,
+    UUID orderId,
     BigDecimal amount,
     PaymentMethod method,
     String transactionReference,

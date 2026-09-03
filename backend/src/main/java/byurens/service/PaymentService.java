@@ -113,6 +113,7 @@ public class PaymentService {
     private PaymentResponse mapToResponse(Payment payment) {
         return new PaymentResponse(
             payment.getId(),
+            payment.getOrder().getId(),
             payment.getAmount(),
             payment.getMethod(),
             payment.getTransactionReference(),
