@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import byurens.dto.HireStaffRequest;
+import byurens.dto.StaffResponse;
 import byurens.entities.Staff;
 import byurens.entities.User;
 import byurens.exception.ByurensCafeException;
@@ -20,7 +21,7 @@ public class StaffService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public Staff hireNewStaff(HireStaffRequest request) {
+    public StaffResponse hireNewStaff(HireStaffRequest request) {
         if (userRepository.existsByEmail(request.email())) {
             throw new ByurensCafeException("Email already been registered");
         }
@@ -40,6 +41,17 @@ public class StaffService {
             .hireDate(request.hireDate())
             .build();
 
-        return staffRepository.save(staff);
+        Staff savedStaff = staffRepository.save(staff);
+        return mapToResponse(savedStaff);
+    }
+
+    private StaffResponse mapToResponse(Staff staff) {
+        return new StaffResponse(
+            staff.getId(),
+            staff.getName(),
+            staff.getRole(),
+            staff.getHourlyRate(),
+            staff.getHireDate()
+        );
     }
 }
