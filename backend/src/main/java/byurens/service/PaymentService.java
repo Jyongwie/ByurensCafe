@@ -12,6 +12,7 @@ import byurens.dto.RefundRequest;
 import byurens.entities.Order;
 import byurens.entities.Payment;
 import byurens.enums.OrderStatus;
+import byurens.enums.PaymentMethod;
 import byurens.enums.PaymentStatus;
 import byurens.enums.TableStatus;
 import byurens.exception.ByurensCafeException;
@@ -77,6 +78,10 @@ public class PaymentService {
             PaymentStatus.PAID
         );
 
+        if (successfulPayments.isEmpty()) {
+            throw new ByurensCafeException("No successful payments found to refund");
+        }
+
         // BigDecimal totalPaid = BigDecimal.ZERO;
 
         // for (Payment payment : successfulPayments) {
@@ -90,9 +95,12 @@ public class PaymentService {
             throw new ByurensCafeException("Cannot refund: " + request.refundAmount() + " . Only " + totalPaid + " has been paid");
         }
 
+        PaymentMethod originalMethod = successfulPayments.get(0).getMethod();
+
         Payment refundRecord = Payment.builder()
             .order(order)
             .amount(request.refundAmount())
+            .method(originalMethod)
             .status(PaymentStatus.REFUNDED)
             .build();
 
