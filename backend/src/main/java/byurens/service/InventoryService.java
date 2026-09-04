@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import byurens.dto.StockAdjustmentRequest;
+import byurens.dto.StockAdjustmentResponse;
 import byurens.entities.InventoryItem;
 import byurens.exception.ByurensCafeException;
 import byurens.repository.InventoryItemRepository;
@@ -15,16 +16,18 @@ public class InventoryService {
     private final InventoryItemRepository inventoryItemRepository;
 
     @Transactional
-    public InventoryItem addStock(StockAdjustmentRequest request) {
+    public StockAdjustmentResponse addStock(StockAdjustmentRequest request) {
         InventoryItem inventoryItem = inventoryItemRepository.findById(request.itemId())
             .orElseThrow(() -> new ByurensCafeException("Inventory item not found"));
 
         inventoryItem.setCurrentStock(inventoryItem.getCurrentStock().add(request.amount()));
-        return inventoryItemRepository.save(inventoryItem);
+
+        InventoryItem savedStock = inventoryItemRepository.save(inventoryItem);
+        return mapToResponse(savedStock);
     }
 
     @Transactional
-    public InventoryItem deductStock(StockAdjustmentRequest request) {
+    public StockAdjustmentResponse deductStock(StockAdjustmentRequest request) {
         InventoryItem inventoryItem = inventoryItemRepository.findById(request.itemId())
             .orElseThrow(() -> new ByurensCafeException("Inventory item not found"));
 
@@ -36,6 +39,18 @@ public class InventoryService {
         }
         
         inventoryItem.setCurrentStock(inventoryItem.getCurrentStock().subtract(request.amount()));
-        return inventoryItemRepository.save(inventoryItem);
+
+        InventoryItem savedStock = inventoryItemRepository.save(inventoryItem);
+        return mapToResponse(savedStock);
+    }
+
+    private StockAdjustmentResponse mapToResponse(InventoryItem inventoryItem) {
+        return new StockAdjustmentResponse(
+            inventoryItem.getId(),
+            inventoryItem.getName(),
+            inventoryItem.getUnitMeasurement(),
+            inventoryItem.getCurrentStock(),
+            inventoryItem.getLowStockThreshold()
+        );
     }
 }
