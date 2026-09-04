@@ -59,10 +59,6 @@ public class PaymentService {
 
         if (totalPaid.compareTo(order.getTotalAmount()) >= 0) {
             order.setPaymentStatus(PaymentStatus.PAID);
-
-            if (order.getTable() != null) {
-                order.getTable().setStatus(TableStatus.AVAILABLE);
-            }
         }
 
         return mapToResponse(savedPayment);
