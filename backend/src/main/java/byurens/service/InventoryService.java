@@ -50,7 +50,8 @@ public class InventoryService {
             inventoryItem.getName(),
             inventoryItem.getUnitMeasurement(),
             inventoryItem.getCurrentStock(),
-            inventoryItem.getLowStockThreshold()
+            inventoryItem.getLowStockThreshold(),
+            inventoryItem.isLowStock()
         );
     }
 }

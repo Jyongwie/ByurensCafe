@@ -10,5 +10,6 @@ public record StockAdjustmentResponse(
     String name,
     UnitMeasurement unitMeasurement,
     BigDecimal currentStock,
-    BigDecimal lowStockThreshold
+    BigDecimal lowStockThreshold,
+    boolean isLowStock
 ) {}
