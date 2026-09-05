@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import byurens.dto.OrderRequest;
 import byurens.dto.OrderResponse;
+import byurens.dto.OrderStatusRequest;
 import byurens.enums.OrderStatus;
 import byurens.service.OrderService;
 import jakarta.validation.Valid;
@@ -31,8 +32,8 @@ public class OrderController {
     }
 
     @PutMapping("/status/{id}")
-    public ResponseEntity<OrderResponse> updateOrderStatus(@PathVariable UUID id, @Valid @RequestBody OrderStatus status) {
-        OrderResponse response = orderService.updateOrderStatus(id, status);
+    public ResponseEntity<OrderResponse> updateOrderStatus(@PathVariable UUID id, @Valid @RequestBody OrderStatusRequest request) {
+        OrderResponse response = orderService.updateOrderStatus(id, request.status());
         return ResponseEntity.ok(response);
     }
 
