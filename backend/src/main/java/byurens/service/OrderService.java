@@ -234,6 +234,18 @@ public class OrderService {
         return "Byu-" + UUID.randomUUID().toString().substring(0, 5).toUpperCase();
     }
 
+    public List<OrderResponse> getOrders() {
+        return orderRepository.findAll().stream()
+            .map(this::mapToResponse).toList();
+    }
+
+    public OrderResponse getOrderById(UUID id) {
+        Order order = orderRepository.findById(id)
+            .orElseThrow(() -> new ByurensCafeException("Order not found"));
+        
+        return mapToResponse(order);
+    }
+
     private OrderResponse mapToResponse(Order order) {
         String customerName = (order.getCustomer() != null)
             ? order.getCustomer().getName()

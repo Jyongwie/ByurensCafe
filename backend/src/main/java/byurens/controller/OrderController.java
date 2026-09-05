@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import byurens.dto.OrderRequest;
 import byurens.dto.OrderResponse;
 import byurens.dto.OrderStatusRequest;
-import byurens.enums.OrderStatus;
 import byurens.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
