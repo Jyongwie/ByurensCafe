@@ -1,9 +1,11 @@
 package byurens.controller;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -39,6 +41,18 @@ public class OrderController {
     @PutMapping("/{id}")
     public ResponseEntity<OrderResponse> updateOrder(@PathVariable UUID id, @Valid @RequestBody OrderRequest request) {
         OrderResponse response = orderService.updateOrder(id, request);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<OrderResponse>> getOrders() {
+        List<OrderResponse> responses = orderService.getOrders();
+        return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<OrderResponse> getOrderById(@PathVariable UUID id) {
+        OrderResponse response = orderService.getOrderById(id);
         return ResponseEntity.ok(response);
     }
 }
