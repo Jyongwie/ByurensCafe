@@ -1,5 +1,8 @@
 package byurens.service;
 
+import java.math.BigDecimal;
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,6 +45,18 @@ public class InventoryService {
 
         InventoryItem savedStock = inventoryItemRepository.save(inventoryItem);
         return mapToResponse(savedStock);
+    }
+
+    @Transactional
+    public void deductStockInternal(UUID itemId, BigDecimal amountToDeduct) {
+        InventoryItem inventoryItem = inventoryItemRepository.findById(itemId)
+            .orElseThrow(() -> new ByurensCafeException("Inventory item not found"));
+
+        if (inventoryItem.getCurrentStock().compareTo(amountToDeduct) < 0) {
+            throw new ByurensCafeException("Insufficient stock for " + inventoryItem.getName());
+        }
+
+        inventoryItem.setCurrentStock(inventoryItem.getCurrentStock().subtract(amountToDeduct));
     }
 
     private StockAdjustmentResponse mapToResponse(InventoryItem inventoryItem) {
