@@ -18,6 +18,7 @@ import byurens.entities.Order;
 import byurens.entities.OrderItem;
 import byurens.entities.OrderItemAddOn;
 import byurens.entities.ProductVariant;
+import byurens.entities.RecipeIngredient;
 import byurens.entities.TableCafe;
 import byurens.enums.OrderStatus;
 import byurens.enums.TableStatus;
@@ -37,6 +38,7 @@ public class OrderService {
     private final TableCafeRepository tableCafeRepository;
     private final ProductVariantRepository productVariantRepository;
     private final AddOnRepository addOnRepository;
+    private final InventoryService inventoryService;
 
     @Transactional
     public OrderResponse createOrder(OrderRequest request) {
@@ -127,6 +129,24 @@ public class OrderService {
             if (order.getTable() != null) {
                 TableCafe tableCafe = order.getTable();
                 tableCafe.setStatus(TableStatus.AVAILABLE);
+            }
+        }
+
+        if (newStatus == OrderStatus.COMPLETED) {
+            for (OrderItem item : order.getOrderItems()) {
+                int quantityOrdered = item.getQuantity();
+
+                if (item.getVariant().getRecipeIngredients() != null) {
+                    for (RecipeIngredient recipeIngredient : item.getVariant().getRecipeIngredients()) {
+                        BigDecimal totalDeduction = recipeIngredient.getQuantityRequired()
+                            .multiply(BigDecimal.valueOf(quantityOrdered));
+
+                        inventoryService.deductStockInternal(
+                            recipeIngredient.getInventoryItem().getId(),
+                            totalDeduction
+                        );
+                    }
+                }
             }
         }
 
