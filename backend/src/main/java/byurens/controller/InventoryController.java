@@ -1,6 +1,7 @@
 package byurens.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,12 +19,14 @@ import lombok.RequiredArgsConstructor;
 public class InventoryController {
     private final InventoryService inventoryService;
 
+    @PreAuthorize("hasRole('MANAGER')")
     @PostMapping("/add-stock")
     public ResponseEntity<StockAdjustmentResponse> addStock(@Valid @RequestBody StockAdjustmentRequest request) {
         StockAdjustmentResponse response = inventoryService.addStock(request);
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasRole('MANAGER')")
     @PostMapping("/deduct-stock")
     public ResponseEntity<StockAdjustmentResponse> deductStock(@Valid @RequestBody StockAdjustmentRequest request) {
         StockAdjustmentResponse response = inventoryService.deductStock(request);
