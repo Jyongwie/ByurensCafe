@@ -2,7 +2,9 @@ package byurens.service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,39 @@ import lombok.RequiredArgsConstructor;
 public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
+
+    @Value("${payment.gateway.webhook-secret}")
+    private String webhookSecret;
+
+    @Transactional 
+    public void processPaymentWebhook(String payload, String signature) {
+        if (!isValidSignature(payload, signature)) {
+            throw new ByurensCafeException("Invalid webhook signature");
+        }
+
+        String eventType = extractEventType(payload);
+        UUID orderId = extractOrderId(payload);
+
+        if ("payment.succeeded".equals(eventType)) {
+            Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ByurensCafeException("Order not found"));
+
+            order.setPaymentStatus(PaymentStatus.PAID);
+            orderRepository.save(order);
+        }
+    }
+
+    private boolean isValidSignature(String payload, String signature) {
+        return true;
+    }
+
+    private String extractEventType(String payload) {
+        return "payment.succeeded";
+    }
+
+    private UUID extractOrderId(String payload) {
+        return UUID.randomUUID();
+    }
 
     @Transactional
     public PaymentResponse processPayment(PaymentRequest request) {
