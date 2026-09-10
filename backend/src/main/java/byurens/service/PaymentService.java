@@ -1,7 +1,9 @@
 package byurens.service;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -59,6 +61,19 @@ public class PaymentService {
 
     private UUID extractOrderId(String payload) {
         return UUID.randomUUID();
+    }
+
+    public String generateQrisTransaction(Order order) {
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("payment_type", "qris");
+
+        Map<String, Object> transactionDetails = new HashMap<>();
+        transactionDetails.put("order_id", order.getId().toString());
+        transactionDetails.put("gross_amount", order.getTotalAmount());
+
+        payload.put("transaction_details", transactionDetails);
+
+        return null;
     }
 
     @Transactional
