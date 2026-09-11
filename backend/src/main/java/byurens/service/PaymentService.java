@@ -7,8 +7,13 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import byurens.dto.PaymentRequest;
 import byurens.dto.PaymentResponse;
@@ -29,6 +34,8 @@ import lombok.RequiredArgsConstructor;
 public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
+
+    private final WebClient webClient = WebClient.builder().build();
 
     @Value("${payment.gateway.webhook-secret}")
     private String webhookSecret;
@@ -73,7 +80,20 @@ public class PaymentService {
 
         payload.put("transaction_details", transactionDetails);
 
-        return null;
+        JsonNode response = webClient.post()
+            .uri("https://api.sandbox.midtrans.com/v2/charge")
+            .header(HttpHeaders.AUTHORIZATION, "server_key")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(payload)
+            .retrieve()
+            .bodyToMono(JsonNode.class)
+            .block();
+
+        if (response != null && response.has("actions")) {
+            return response.get("actions").get(0).get("url").asText();
+        }
+
+        throw new ByurensCafeException("Failed to generate QRIS transaction");
     }
 
     @Transactional
