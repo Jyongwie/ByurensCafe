@@ -1,10 +1,15 @@
 package byurens.service;
 
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -59,7 +64,18 @@ public class PaymentService {
     }
 
     private boolean isValidSignature(String payload, String signature) {
-        return true;
+        try {
+            Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
+            SecretKeySpec secretKey = new SecretKeySpec(webhookSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+            sha256_HMAC.init(secretKey);
+
+            byte[] rawHmac = sha256_HMAC.doFinal(payload.getBytes(StandardCharsets.UTF_8));
+            String expectedSignature = Base64.getEncoder().encodeToString(rawHmac);
+
+            return expectedSignature.equals(signature);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private String extractEventType(String payload) {
