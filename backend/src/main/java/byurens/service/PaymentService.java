@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import byurens.dto.PaymentRequest;
 import byurens.dto.PaymentResponse;
@@ -39,6 +40,7 @@ import lombok.RequiredArgsConstructor;
 public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
+    private final ObjectMapper objectMapper;
 
     private final WebClient webClient = WebClient.builder().build();
 
@@ -79,11 +81,22 @@ public class PaymentService {
     }
 
     private String extractEventType(String payload) {
-        return "payment.succeeded";
+        try {
+            JsonNode root = objectMapper.readTree(payload);
+            return root.path("transaction_status").asText();
+        } catch (Exception e) {
+            throw new ByurensCafeException("Failed to parse webhook payload");
+        }
     }
 
     private UUID extractOrderId(String payload) {
-        return UUID.randomUUID();
+        try {
+            JsonNode root = objectMapper.readTree(payload);
+            String orderId = root.path("order_id").asText();
+            return UUID.fromString(orderId);
+        } catch (Exception e) {
+            throw new ByurensCafeException("Failed to parse order ID from webhook");
+        }
     }
 
     public String generateQrisTransaction(Order order) {
