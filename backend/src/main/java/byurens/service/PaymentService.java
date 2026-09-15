@@ -53,14 +53,26 @@ public class PaymentService {
             throw new ByurensCafeException("Invalid webhook signature");
         }
 
-        String eventType = extractEventType(payload);
+        String transactionStatus = extractEventType(payload);
         UUID orderId = extractOrderId(payload);
 
-        if ("payment.succeeded".equals(eventType)) {
+        if ("settlement".equals(transactionStatus) || "capture".equals(transactionStatus)) {
             Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ByurensCafeException("Order not found"));
 
             order.setPaymentStatus(PaymentStatus.PAID);
+            orderRepository.save(order);
+        } else if ("expire".equals(transactionStatus) || "cancel".equals(transactionStatus)) {
+            Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ByurensCafeException("Order not found"));
+            
+            order.setPaymentStatus(PaymentStatus.UNPAID);
+            order.setOrderStatus(OrderStatus.CANCELLED);
+
+            if (order.getTable() != null) {
+                order.getTable().setStatus(TableStatus.AVAILABLE);
+            }
+
             orderRepository.save(order);
         }
     }
