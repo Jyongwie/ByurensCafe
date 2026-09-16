@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +41,10 @@ public class OrderService {
     private final ProductVariantRepository productVariantRepository;
     private final AddOnRepository addOnRepository;
     private final InventoryService inventoryService;
+
+    public Page<OrderResponse> getOrders(Pageable pageable) {
+        return orderRepository.findAll(pageable).map(this::mapToResponse);
+    }
 
     @Transactional
     public OrderResponse createOrder(OrderRequest request) {
