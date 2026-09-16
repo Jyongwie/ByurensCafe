@@ -1,5 +1,6 @@
 package byurens.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -80,6 +81,8 @@ public class UserService implements UserDetailsService {
 
         String displayName = "Guest";
         String displayRole = "GUEST";
+        int loyaltyPoint = 0;
+        BigDecimal walletBalance = BigDecimal.ZERO;
 
         Optional<Staff> staff = staffRepository.findById(user.getId());
         if (staff.isPresent()) {
@@ -90,6 +93,8 @@ public class UserService implements UserDetailsService {
             if (customer.isPresent()) {
                 displayName = customer.get().getName();
                 displayRole = "CUSTOMER";
+                loyaltyPoint = customer.get().getLoyaltyPoint();
+                walletBalance = customer.get().getWalletBalance();
             }
         }
 
@@ -98,7 +103,9 @@ public class UserService implements UserDetailsService {
             user.getEmail(),
             displayName,
             displayRole,
-            user.getPhoneNumber()
+            user.getPhoneNumber(),
+            loyaltyPoint,
+            walletBalance
         );
     }
 }

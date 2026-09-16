@@ -1,5 +1,6 @@
 package byurens.dto;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public record UserProfileResponse(
@@ -7,5 +8,7 @@ public record UserProfileResponse(
     String email,
     String name,
     String role,
-    String phoneNumber
+    String phoneNumber,
+    int loyaltyPoint,
+    BigDecimal walletBalace
 ) {}
