@@ -2,9 +2,12 @@ package byurens.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,8 +15,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import byurens.dto.UserProfileResponse;
+import byurens.entities.Customer;
+import byurens.entities.Staff;
 import byurens.entities.User;
 import byurens.exception.ByurensCafeException;
+import byurens.repository.CustomerRepository;
 import byurens.repository.StaffRepository;
 import byurens.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final StaffRepository staffRepository;
+    private final CustomerRepository customerRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional 
@@ -60,6 +68,37 @@ public class UserService implements UserDetailsService {
             true,
             true,
             authorities
+        );
+    }
+
+    public UserProfileResponse getUserProfile() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new ByurensCafeException("User not found"));
+
+        String displayName = "Guest";
+        String displayRole = "GUEST";
+
+        Optional<Staff> staff = staffRepository.findById(user.getId());
+        if (staff.isPresent()) {
+            displayName = staff.get().getName();
+            displayRole = staff.get().getRole().name();
+        } else {
+            Optional<Customer> customer = customerRepository.findById(user.getId());
+            if (customer.isPresent()) {
+                displayName = customer.get().getName();
+                displayRole = "CUSTOMER";
+            }
+        }
+
+        return new UserProfileResponse(
+            user.getId(),
+            user.getEmail(),
+            displayName,
+            displayRole,
+            user.getPhoneNumber()
         );
     }
 }
