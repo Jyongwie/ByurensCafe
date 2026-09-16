@@ -19,14 +19,14 @@ import lombok.RequiredArgsConstructor;
 public class InventoryController {
     private final InventoryService inventoryService;
 
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasAnyRole('OWNER', 'MANAGER')")
     @PostMapping("/add-stock")
     public ResponseEntity<StockAdjustmentResponse> addStock(@Valid @RequestBody StockAdjustmentRequest request) {
         StockAdjustmentResponse response = inventoryService.addStock(request);
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasAnyRole('OWNER', 'MANAGER')")
     @PostMapping("/deduct-stock")
     public ResponseEntity<StockAdjustmentResponse> deductStock(@Valid @RequestBody StockAdjustmentRequest request) {
         StockAdjustmentResponse response = inventoryService.deductStock(request);
