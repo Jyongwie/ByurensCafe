@@ -1,0 +1,153 @@
+<div class="flex h-screen w-full bg-[#F9F8F6] font-sans text-[#2A211D]">
+  <!-- LEFT SIDEBAR: Navigation Menu -->
+  <aside class="w-64 bg-[#FDFBF7] border-r border-[#4A3B32]/10 flex flex-col flex-shrink-0">
+    <!-- Brand / Logo Area -->
+    <div class="h-20 flex items-center px-8 border-b border-[#4A3B32]/5">
+      <h1 class="text-2xl font-bold tracking-tight text-[#2A211D]">Byurens Cafe</h1>
+    </div>
+
+    <!-- Navigation Links -->
+    <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+      <!-- Register / POS -->
+      <a
+        routerLink="/pos"
+        routerLinkActive="bg-[#4A3B32] text-white shadow-md"
+        class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#4A3B32] hover:bg-[#4A3B32]/5 transition-all font-medium group cursor-pointer"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+          />
+        </svg>
+        Register
+      </a>
+
+      <!-- Dashboard -->
+      <a
+        routerLink="/dashboard"
+        routerLinkActive="bg-[#4A3B32] text-white shadow-md"
+        class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#4A3B32] hover:bg-[#4A3B32]/5 transition-all font-medium cursor-pointer"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+          />
+        </svg>
+        Dashboard
+      </a>
+
+      <!-- Order History -->
+      <a
+        routerLink="/orders"
+        routerLinkActive="bg-[#4A3B32] text-white shadow-md"
+        class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#4A3B32] hover:bg-[#4A3B32]/5 transition-all font-medium cursor-pointer"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+          />
+        </svg>
+        Order History
+      </a>
+
+      <!-- Inventory -->
+      <a
+        routerLink="/inventory"
+        routerLinkActive="bg-[#4A3B32] text-white shadow-md"
+        class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#4A3B32] hover:bg-[#4A3B32]/5 transition-all font-medium cursor-pointer"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+          />
+        </svg>
+        Inventory
+      </a>
+    </nav>
+
+    <!-- Bottom Actions (Sign Out) -->
+    <div class="p-4 border-t border-[#4A3B32]/10">
+      <button
+        class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-red-600 hover:bg-red-50 transition-colors font-medium text-sm"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+          />
+        </svg>
+        Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- RIGHT MAIN AREA -->
+  <div class="flex-1 flex flex-col min-w-0">
+    <!-- Top Global Header -->
+    <header
+      class="h-20 bg-white border-b border-[#4A3B32]/10 flex items-center justify-between px-8 flex-shrink-0 shadow-sm z-10"
+    >
+      <!-- Contextual Title (Can be dynamic later) -->
+      <h2 class="text-lg font-semibold text-[#2A211D]">Point of Sale</h2>
+
+      <!-- Global Status & Profile -->
+      <div class="flex items-center gap-6">
+        <!-- Connection Status -->
+        <div
+          class="flex items-center gap-2 text-sm font-semibold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full"
+        >
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          PostgreSQL Online
+        </div>
+
+        <!-- Digital Clock -->
+        <div class="text-sm font-bold tracking-wide text-[#4A3B32]">
+          {{ currentTime() }}
+        </div>
+
+        <div class="w-px h-8 bg-[#4A3B32]/10"></div>
+
+        <!-- Barista Profile (Decoded JWT data) -->
+        <div class="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity">
+          <div class="text-right">
+            <p class="text-sm font-bold text-[#2A211D]">barista name</p>
+            <p class="text-xs text-[#4A3B32]/70 font-medium">Head Barista</p>
+          </div>
+          <div
+            class="w-10 h-10 rounded-full bg-[#4A3B32] flex items-center justify-center text-white font-bold text-sm shadow-inner"
+          >
+            barista name
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Dynamic Page Content Area -->
+    <main class="flex-1 overflow-y-auto p-8 relative">
+      <!-- Global Webhook/QRIS Alert Anchor -->
+      <div class="absolute top-4 right-8 z-50 flex flex-col gap-2 pointer-events-none">
+        <!-- Example of a hidden toast notification -->
+        <!-- <div class="bg-emerald-600 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 w-80">
+                   <svg class="w-5 h-5" ...></svg> QRIS Payment Received: Rp 45.000
+                 </div> -->
+      </div>
+
+      <!-- Component Injection Point -->
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
