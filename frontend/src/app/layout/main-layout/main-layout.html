@@ -1,6 +1,6 @@
 <div class="flex h-screen w-full bg-[#F9F8F6] font-sans text-[#2A211D]">
   <!-- LEFT SIDEBAR: Navigation Menu -->
-  <aside class="w-64 bg-[#FDFBF7] border-r border-[#4A3B32]/10 flex flex-col flex-shrink-0">
+  <aside class="hidden md:flex w-64 bg-[#FDFBF7] border-r border-[#4A3B32]/10 flex flex-col flex-shrink-0">
     <!-- Brand / Logo Area -->
     <div class="h-20 flex items-center px-8 border-b border-[#4A3B32]/5">
       <h1 class="text-2xl font-bold tracking-tight text-[#2A211D]">Byurens Cafe</h1>
@@ -8,22 +8,6 @@
 
     <!-- Navigation Links -->
     <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-      <!-- Register / POS -->
-      <a
-        routerLink="/pos"
-        routerLinkActive="bg-[#4A3B32] text-white shadow-md"
-        class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#4A3B32] hover:bg-[#4A3B32]/5 transition-all font-medium group cursor-pointer"
-      >
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
-          />
-        </svg>
-        Register
-      </a>
 
       <!-- Dashboard -->
       <a
@@ -108,14 +92,14 @@
       <div class="flex items-center gap-6">
         <!-- Connection Status -->
         <div
-          class="flex items-center gap-2 text-sm font-semibold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full"
+          class="hidden sm:flex items-center gap-2 text-sm font-semibold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full"
         >
           <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
           PostgreSQL Online
         </div>
 
         <!-- Digital Clock -->
-        <div class="text-sm font-bold tracking-wide text-[#4A3B32]">
+        <div class="hidden sm:block text-sm font-bold tracking-wide text-[#4A3B32]">
           {{ currentTime() }}
         </div>
 
