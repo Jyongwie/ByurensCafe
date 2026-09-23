@@ -38,8 +38,10 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(
                 auth -> auth
-                    .requestMatchers("/api/auth/**").permitAll().anyRequest().authenticated()
-                    .requestMatchers("/api/webhooks/**").permitAll().anyRequest().authenticated()
+                    .requestMatchers("/api/auth/**").permitAll()
+                    .requestMatchers("/api/webhooks/**").permitAll()
+                    .requestMatchers("/actuator/health").permitAll()
+                    .anyRequest().authenticated()
             ).sessionManagement(
                 session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             ).addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

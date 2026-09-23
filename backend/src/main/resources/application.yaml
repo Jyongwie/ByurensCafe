@@ -16,3 +16,8 @@ jwt:
 payment:
   gateway:
     webhook-secret: "copied_key_from_midtrans"
+
+management:
+  endpoint:
+    health:
+      show-details: always
