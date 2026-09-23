@@ -3,43 +3,7 @@
   <!-- RIGHT MAIN AREA -->
   <div class="flex-1 flex flex-col min-w-0">
     <!-- Top Global Header -->
-    <header
-      class="h-20 bg-white border-b border-[#4A3B32]/10 flex items-center justify-between px-8 flex-shrink-0 shadow-sm z-10"
-    >
-      <!-- Contextual Title (Can be dynamic later) -->
-      <h2 class="text-lg font-semibold text-[#2A211D]">Point of Sale</h2>
-
-      <!-- Global Status & Profile -->
-      <div class="flex items-center gap-6">
-        <!-- Connection Status -->
-        <div
-          class="hidden sm:flex items-center gap-2 text-sm font-semibold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full"
-        >
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          PostgreSQL Online
-        </div>
-
-        <!-- Digital Clock -->
-        <div class="hidden sm:block text-sm font-bold tracking-wide text-[#4A3B32]">
-          {{ currentTime() }}
-        </div>
-
-        <div class="w-px h-8 bg-[#4A3B32]/10"></div>
-
-        <!-- Barista Profile (Decoded JWT data) -->
-        <div class="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity">
-          <div class="text-right">
-            <p class="text-sm font-bold text-[#2A211D]">barista name</p>
-            <p class="text-xs text-[#4A3B32]/70 font-medium">Head Barista</p>
-          </div>
-          <div
-            class="w-10 h-10 rounded-full bg-[#4A3B32] flex items-center justify-center text-white font-bold text-sm shadow-inner"
-          >
-            barista name
-          </div>
-        </div>
-      </div>
-    </header>
+     <app-header></app-header>
 
     <!-- Dynamic Page Content Area -->
     <main class="flex-1 overflow-y-auto p-8 relative">
