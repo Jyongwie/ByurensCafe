@@ -7,12 +7,23 @@
   <!-- Global Status & Profile -->
   <div class="flex items-center gap-6">
     <!-- Connection Status -->
-    <div
-      class="hidden sm:flex items-center gap-2 text-sm font-semibold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full"
-    >
-      <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-      PostgreSQL Online
-    </div>
+     @if (isSystemOnline()) {
+      <div
+        class="hidden sm:flex items-center gap-2 text-sm font-semibold text-emerald-600 bg-emerald-50 border border-emerald-100 px-3 py-1.5 rounded-full transition-all"
+      >
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        System Online
+      </div>
+     } @else {
+      <div
+        class="hidden sm:flex items-center gap-2 text-sm font-bold text-red-700 bg-red-100 border border-red-200 px-4 py-1.5 rounded-full animate-bounce shadow-sm"
+      >
+      <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg>
+        Connection Lost
+      </div>
+     }
 
     <!-- Digital Clock -->
     <div class="hidden sm:block text-sm font-bold tracking-wide text-[#4A3B32]">
