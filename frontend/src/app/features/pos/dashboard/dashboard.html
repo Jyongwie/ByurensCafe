@@ -1,1 +1,60 @@
-<p>dashboard works!</p>
+<div class="p-2 space-y-6 animate-fade-in" *ngIf="dashboardData">
+  
+  <!-- Top Stat Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#4A3B32]/10 flex flex-col justify-center">
+      <p class="text-sm font-semibold text-[#4A3B32]/60 uppercase tracking-wider">Today's Revenue</p>
+      <h3 class="text-3xl font-bold text-[#2A211D] mt-2">Rp {{ dashboardData.totalDailyRevenue | number }}</h3>
+    </div>
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#4A3B32]/10 flex flex-col justify-center">
+      <p class="text-sm font-semibold text-[#4A3B32]/60 uppercase tracking-wider">Total Orders</p>
+      <h3 class="text-3xl font-bold text-[#2A211D] mt-2">{{ dashboardData.totalDailyOrders }}</h3>
+    </div>
+  </div>
+
+  <!-- Main Line Chart: Revenue Pulse -->
+  <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#4A3B32]/10">
+    <h3 class="text-lg font-bold text-[#2A211D] mb-4">Revenue Pulse (Today)</h3>
+    <div class="h-72">
+      <canvas baseChart
+        [data]="lineChartData"
+        [options]="lineChartOptions"
+        type="line">
+      </canvas>
+    </div>
+  </div>
+
+  <!-- Bottom Split: Top Items & Payment Methods -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    
+    <!-- Horizontal Bar Chart -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#4A3B32]/10">
+      <h3 class="text-lg font-bold text-[#2A211D] mb-4">Top Selling Items</h3>
+      <div class="h-64">
+        <canvas baseChart
+          [data]="barChartData"
+          [options]="barChartOption"
+          type="bar">
+        </canvas>
+      </div>
+    </div>
+
+    <!-- Doughnut Chart -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#4A3B32]/10 relative">
+      <h3 class="text-lg font-bold text-[#2A211D] mb-4">Payment Methods</h3>
+      <div class="h-64 relative">
+        <canvas baseChart
+          [data]="pieChartData"
+          [options]="pieChartOptions"
+          type="doughnut">
+        </canvas>
+        <!-- Center text for Doughnut -->
+        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mt-4">
+          <span class="text-2xl font-bold text-[#4A3B32]">{{ dashboardData.totalDailyOrders }}</span>
+          <span class="text-xs font-semibold text-[#4A3B32]/60">Orders</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

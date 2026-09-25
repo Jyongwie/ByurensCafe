@@ -35,7 +35,18 @@ export class Dashboard implements OnInit {
   };
 
   lineChartData!: ChartConfiguration<'line'>['data'];
-  lineChartOptions: ChartOptions<'line'> = { ...(this.baseOptions as any) };
+  lineChartOptions: ChartOptions<'line'> = { 
+    ...(this.baseOptions as any),
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: (context) => `Rp ${context.raw?.toLocaleString()}`
+        }
+      }
+    } 
+  };
 
   barChartData!: ChartConfiguration<'bar'>['data'];
   barChartOption: ChartOptions<'bar'> = {
@@ -53,10 +64,46 @@ export class Dashboard implements OnInit {
   }
 
   ngOnInit(): void {
-    this.dashboardService.getTodayDashboard().subscribe(data => {
-      this.dashboardData = data;
-      this.initCharts(data);
-    })
+    // DUMMY DATA PAYLOAD
+    const dummyData: DashboardResponse = {
+      totalDailyRevenue: 4250000,
+      totalDailyOrders: 142,
+      hourlySales: [
+        { hour: 8, revenue: 350000, orderCount: 12 },
+        { hour: 9, revenue: 550000, orderCount: 20 },
+        { hour: 10, revenue: 450000, orderCount: 15 },
+        { hour: 11, revenue: 300000, orderCount: 10 },
+        { hour: 12, revenue: 700000, orderCount: 25 },
+        { hour: 13, revenue: 850000, orderCount: 28 },
+        { hour: 14, revenue: 400000, orderCount: 12 },
+        { hour: 15, revenue: 350000, orderCount: 10 },
+        { hour: 16, revenue: 300000, orderCount: 10 }
+      ],
+      topProducts: [
+        { name: 'Iced Caramel Macchiato', quantity: 45 },
+        { name: 'Cafe Latte', quantity: 38 },
+        { name: 'Butter Croissant', quantity: 32 },
+        { name: 'Americano', quantity: 28 },
+        { name: 'Matcha Latte', quantity: 24 }
+      ],
+      topAddOns: [
+        { name: 'Oat Milk', quantity: 18 },
+        { name: 'Extra Espresso Shot', quantity: 15 },
+        { name: 'Vanilla Syrup', quantity: 12 }
+      ],
+      paymentStats: [
+        { method: 'QRIS', count: 85 },
+        { method: 'CASH', count: 35 },
+        { method: 'CARD', count: 22 }
+      ]
+    };
+
+    this.dashboardData = dummyData;
+    this.initCharts(dummyData);
+    // this.dashboardService.getTodayDashboard().subscribe(data => {
+    //   this.dashboardData = data;
+    //   this.initCharts(data);
+    // })
   }
 
   private initCharts(data: DashboardResponse): void {
@@ -68,7 +115,8 @@ export class Dashboard implements OnInit {
         backgroundColor: this.mochaLight,
         fill: true,
         tension: 0.4,
-        pointRadius: 0
+        pointRadius: 0,
+        pointHoverRadius: 6
       }]
     };
 
