@@ -1,60 +1,123 @@
-<div class="p-2 space-y-6 animate-fade-in" *ngIf="dashboardData">
-  
-  <!-- Top Stat Cards -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#4A3B32]/10 flex flex-col justify-center">
-      <p class="text-sm font-semibold text-[#4A3B32]/60 uppercase tracking-wider">Today's Revenue</p>
-      <h3 class="text-3xl font-bold text-[#2A211D] mt-2">Rp {{ dashboardData.totalDailyRevenue | number }}</h3>
-    </div>
-    <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#4A3B32]/10 flex flex-col justify-center">
-      <p class="text-sm font-semibold text-[#4A3B32]/60 uppercase tracking-wider">Total Orders</p>
-      <h3 class="text-3xl font-bold text-[#2A211D] mt-2">{{ dashboardData.totalDailyOrders }}</h3>
-    </div>
-  </div>
-
-  <!-- Main Line Chart: Revenue Pulse -->
-  <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#4A3B32]/10">
-    <h3 class="text-lg font-bold text-[#2A211D] mb-4">Revenue Pulse (Today)</h3>
-    <div class="h-72">
-      <canvas baseChart
-        [data]="lineChartData"
-        [options]="lineChartOptions"
-        type="line">
-      </canvas>
-    </div>
-  </div>
-
-  <!-- Bottom Split: Top Items & Payment Methods -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    
-    <!-- Horizontal Bar Chart -->
-    <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#4A3B32]/10">
-      <h3 class="text-lg font-bold text-[#2A211D] mb-4">Top Selling Items</h3>
-      <div class="h-64">
-        <canvas baseChart
-          [data]="barChartData"
-          [options]="barChartOptions"
-          type="bar">
-        </canvas>
+<div class="p-2 space-y-6 animate-fade-in">
+  @if (dashboardData) {
+    <div class="p-2 space-y-6 animate-fade-in">
+      <!-- Top Stat Cards (4 Columns) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#4A3B32]/10">
+          <p class="text-sm font-semibold text-[#4A3B32]/60 uppercase tracking-wider">Revenue</p>
+          <h3 class="text-2xl font-bold text-[#2A211D] mt-2">
+            Rp {{ dashboardData.totalDailyRevenue | number }}
+          </h3>
+        </div>
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#4A3B32]/10">
+          <p class="text-sm font-semibold text-[#4A3B32]/60 uppercase tracking-wider">Orders</p>
+          <h3 class="text-2xl font-bold text-[#2A211D] mt-2">
+            {{ dashboardData.totalDailyOrders }}
+          </h3>
+        </div>
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#4A3B32]/10">
+          <p class="text-sm font-semibold text-[#4A3B32]/60 uppercase tracking-wider">
+            Avg Order Value
+          </p>
+          <h3 class="text-2xl font-bold text-[#2A211D] mt-2">
+            Rp {{ averageOrderValue | number: '1.0-0' }}
+          </h3>
+        </div>
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#4A3B32]/10">
+          <p class="text-sm font-semibold text-[#4A3B32]/60 uppercase tracking-wider">
+            Member Orders
+          </p>
+          <h3 class="text-2xl font-bold text-[#2A211D] mt-2">
+            {{ loyaltyPercentage | number: '1.1-1' }}%
+          </h3>
+        </div>
       </div>
-    </div>
 
-    <!-- Doughnut Chart -->
-    <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#4A3B32]/10 relative">
-      <h3 class="text-lg font-bold text-[#2A211D] mb-4">Payment Methods</h3>
-      <div class="h-64 relative">
-        <canvas baseChart
-          [data]="pieChartData"
-          [options]="pieChartOptions"
-          type="doughnut">
-        </canvas>
-        <!-- Center text for Doughnut -->
-        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mt-4">
-          <span class="text-2xl font-bold text-[#4A3B32]">{{ dashboardData.totalDailyOrders }}</span>
-          <span class="text-xs font-semibold text-[#4A3B32]/60">Orders</span>
+      <!-- Main Line Chart (Full Width) -->
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#4A3B32]/10">
+        <h3 class="text-lg font-bold text-[#2A211D] mb-4">Revenue & AOV Pulse</h3>
+        <div class="h-72">
+          <canvas
+            baseChart
+            [data]="lineChartData"
+            [options]="lineChartOptions"
+            type="line"
+          ></canvas>
+        </div>
+      </div>
+
+      <!-- Product Performance (2 Columns) -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#4A3B32]/10">
+          <h3 class="text-lg font-bold text-[#2A211D] mb-4">Top Selling Items</h3>
+          <div class="h-64">
+            <canvas baseChart [data]="barChartData" [options]="barChartOptions" type="bar"></canvas>
+          </div>
+        </div>
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#4A3B32]/10">
+          <h3 class="text-lg font-bold text-[#2A211D] mb-4">Top Add-Ons</h3>
+          <div class="h-64">
+            <canvas
+              baseChart
+              [data]="addOnChartData"
+              [options]="barChartOptions"
+              type="bar"
+            ></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Operations & Categories (2 Columns) -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#4A3B32]/10">
+          <h3 class="text-lg font-bold text-[#2A211D] mb-4">Order Types</h3>
+          <div class="h-64 w-full flex items-center justify-center">
+            <canvas
+              baseChart
+              [data]="orderTypeChartData"
+              [options]="pieChartOptions"
+              type="doughnut"
+            ></canvas>
+          </div>
+        </div>
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#4A3B32]/10">
+          <h3 class="text-lg font-bold text-[#2A211D] mb-4">Payment Methods</h3>
+          <div class="h-64 w-full flex items-center justify-center">
+            <canvas
+              baseChart
+              [data]="pieChartData"
+              [options]="pieChartOptions"
+              type="doughnut"
+            ></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Demographics & Categories (2 Columns) -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#4A3B32]/10">
+          <h3 class="text-lg font-bold text-[#2A211D] mb-4">Customer Loyalty</h3>
+          <div class="h-64 w-full flex items-center justify-center">
+            <canvas
+              baseChart
+              [data]="loyaltyTypeChartData"
+              [options]="pieChartOptions"
+              type="doughnut"
+            ></canvas>
+          </div>
+        </div>
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#4A3B32]/10">
+          <h3 class="text-lg font-bold text-[#2A211D] mb-4">Sales by Category</h3>
+          <div class="h-64">
+            <canvas
+              baseChart
+              [data]="categoryChartData"
+              [options]="polarChartOptions"
+              type="polarArea"
+            ></canvas>
+          </div>
         </div>
       </div>
     </div>
-
-  </div>
+  }
 </div>
