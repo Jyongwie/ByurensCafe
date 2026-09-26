@@ -20,26 +20,32 @@ export class Dashboard implements OnInit {
 
   dashboardData?: DashboardResponse;
 
-  mocha = '#4A3B32'
+  averageOrderValue: number = 0;
+  loyaltyPercentage: number = 0;
+
+  mocha = '#4A3B32';
   mochaLight = 'rgba(74, 59, 50, 0.1)';
-  cream = '#FDFBF7'
+  cream = '#FDFBF7';
+  caramel = '#A98467';
+  colorPalette = ['#4A3B32', '#6C584C', '#A98467', '#DDC3A5', '#EAE0D5'];
 
   baseOptions: ChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: { legend: { display: false } },
-    scales: {
-      x: { grid: { display: false }, border: { display: false } },
-      y: { grid: { display: false }, border: { display: false }, ticks: { display: false } }
-    }
   };
 
   lineChartData!: ChartConfiguration<'line'>['data'];
   lineChartOptions: ChartOptions<'line'> = { 
     ...(this.baseOptions as any),
     interaction: { mode: 'index', intersect: false },
+    scales: {
+      x: { grid: { display: false }, border: { display: false } },
+      y: { type: 'linear', display: false, position: 'left' },
+      y1: { type: 'linear', display: false, position: 'right' }
+    },
     plugins: {
-      legend: { display: false },
+      legend: { display: true, position: 'top', labels: { usePointStyle: true, color: this.mocha } },
       tooltip: {
         callbacks: {
           label: (context) => `Rp ${context.raw?.toLocaleString()}`
@@ -48,20 +54,29 @@ export class Dashboard implements OnInit {
     } 
   };
 
+  addOnChartData!: ChartConfiguration<'bar'>['data'];
   barChartData!: ChartConfiguration<'bar'>['data'];
-  barChartOption: ChartOptions<'bar'> = {
+  barChartOptions: ChartOptions<'bar'> = {
     ...(this.baseOptions as any),
     indexAxis: 'y',
     scales: { x: { display: false }, y: { grid: { display: false }, border: { display: false } } }
   };
 
+  orderTypeChartData!: ChartConfiguration<'doughnut'>['data'];
+  loyaltyTypeChartData!: ChartConfiguration<'doughnut'>['data'];
   pieChartData!: ChartConfiguration<'doughnut'>['data'];
   pieChartOptions: ChartOptions<'doughnut'> = {
     responsive: true,
-    maintainAspectRatio: false,
     cutout: '75%',
     plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, color: this.mocha } } }
-  }
+  };
+
+  categoryChartData!: ChartConfiguration<'polarArea'>['data'];
+  polarChartOptions: ChartOptions<'polarArea'> = {
+    ...(this.baseOptions as any),
+    plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, color: this.mocha } } },
+    scales: { r: { ticks: { display: false }, grid: { color: 'rgba(74, 59, 50, 0.1)' } } }
+  };
 
   ngOnInit(): void {
     // DUMMY DATA PAYLOAD
@@ -95,10 +110,29 @@ export class Dashboard implements OnInit {
         { method: 'QRIS', count: 85 },
         { method: 'CASH', count: 35 },
         { method: 'CARD', count: 22 }
-      ]
+      ],
+      orderTypes: [
+        { type: 'Dine-in', count: 95 },
+        { type: 'TAKEAWAY', count: 47 }
+      ],
+      loyaltyStats: [
+        { type: 'Walk-in', count: 112 },
+        { type: 'Registered Member', count: 30 }
+      ],
+      categorySales: [
+        { category: 'Espresso Based', quantity: 85 },
+        { category: 'Pastry', quantity: 45 },
+        { category: 'Non-Coffee', quantity: 35 },
+        { category: 'Manual Brew', quantity: 20 }
+      ],
     };
 
     this.dashboardData = dummyData;
+    this.averageOrderValue = dummyData.totalDailyRevenue / dummyData.totalDailyOrders;
+
+    const memberCount = dummyData.loyaltyStats.find(l => l.type === 'Registered Member')?.count || 0;
+    this.loyaltyPercentage = (memberCount / dummyData.totalDailyOrders) * 100;
+
     this.initCharts(dummyData);
     // this.dashboardService.getTodayDashboard().subscribe(data => {
     //   this.dashboardData = data;
@@ -110,14 +144,28 @@ export class Dashboard implements OnInit {
     this.lineChartData = {
       labels: data.hourlySales.map(s => `${s.hour}:00`),
       datasets: [{
+        label: 'Revenue (Rp)',
         data: data.hourlySales.map(s => s.revenue),
         borderColor: this.mocha,
         backgroundColor: this.mochaLight,
         fill: true,
         tension: 0.4,
         pointRadius: 0,
-        pointHoverRadius: 6
-      }]
+        pointHoverRadius: 6,
+        yAxisID: 'y'
+      },
+      {
+        label: 'Avg Order Value (Rp)',
+        data: data.hourlySales.map(s => s.revenue / s.orderCount),
+        borderColor: this.caramel,
+        borderDash: [5, 5],
+        fill: false,
+        tension: 0.4,
+        pointRadius: 0,
+        pointHoverRadius: 6,
+        yAxisID: 'y1'
+      }
+    ]
     };
 
     this.barChartData = {
@@ -136,6 +184,42 @@ export class Dashboard implements OnInit {
         data: data.paymentStats.map(p => p.count),
         backgroundColor: [this.mocha, '#6C584C', '#A98467', '#DDC3A5'],
         borderWidth: 0
+      }]
+    };
+
+    this.addOnChartData = {
+      labels: data.topAddOns.map(a => a.name),
+      datasets: [{
+        data: data.topAddOns.map(a => a.quantity),
+        backgroundColor: this.caramel,
+        borderRadius: 4,
+        barThickness: 24
+      }]
+    };
+
+    this.orderTypeChartData = {
+      labels: data.orderTypes.map(o => o.type),
+      datasets: [{
+        data: data.orderTypes.map(o => o.count),
+        backgroundColor: [this.mocha, this.caramel],
+        borderWidth: 0
+      }]
+    };
+
+    this.loyaltyTypeChartData = {
+      labels: data.loyaltyStats.map(l => l.type),
+      datasets: [{
+        data: data.loyaltyStats.map(l => l.count),
+        backgroundColor: ['#DDC3A5', this.mocha],
+        borderWidth: 0
+      }]
+    };
+
+    this.categoryChartData = {
+      labels: data.categorySales.map(c => c.category),
+      datasets: [{
+        data: data.categorySales.map(c => c.quantity),
+        backgroundColor: ['rgba(74, 59, 50, 0.8)', 'rgba(169, 132, 103, 0.8)', 'rgba(221, 195, 165, 0.8)', 'rgba(108, 88, 76, 0.8)']
       }]
     };
   }
