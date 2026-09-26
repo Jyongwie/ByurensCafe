@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { Login } from './features/auth/login/login';
 import { Dashboard } from './features/pos/dashboard/dashboard';
 import { MainLayout } from './layout/main-layout/main-layout';
+import { Order } from './features/pos/order/order';
 
 export const routes: Routes = [
     {path: 'login', component: Login},
@@ -10,6 +11,7 @@ export const routes: Routes = [
         component: MainLayout,
         children:[
             {path: 'dashboard', component: Dashboard},
+            {path: 'orders', component: Order},
             {path:'', redirectTo: 'dashboard', pathMatch: 'full'}
         ]
     },

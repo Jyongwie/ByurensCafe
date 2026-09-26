@@ -1,0 +1,61 @@
+<div class="p-6 h-full flex flex-col animate-fade-in">
+  <!-- Tabs Navigation -->
+  <div class="flex items-end px-2">
+    <!-- Current Order Tab -->
+    <button
+      (click)="setTab('current')"
+      class="px-8 py-3 text-sm font-semibold rounded-t-xl transition-all border border-b-0 relative top-[1px]"
+      [ngClass]="{
+        'bg-white text-[#2A211D] border-[#4A3B32]/10 z-10': activeTab === 'current',
+        'bg-transparent text-[#4A3B32]/60 border-transparent hover:bg-white/50':
+          activeTab !== 'current',
+      }"
+    >
+      Order
+    </button>
+
+    <!-- History Tab -->
+    <button
+      (click)="setTab('history')"
+      class="px-8 py-3 text-sm font-semibold rounded-t-xl transition-all border border-b-0 relative top-[1px]"
+      [ngClass]="{
+        'bg-white text-[#2A211D] border-[#4A3B32]/10 z-10': activeTab === 'history',
+        'bg-transparent text-[#4A3B32]/60 border-transparent hover:bg-white/50':
+          activeTab !== 'history',
+      }"
+    >
+      History
+    </button>
+  </div>
+
+  <!-- Main Content Area -->
+  <div
+    class="bg-white border border-[#4A3B32]/10 rounded-2xl flex-grow p-6 shadow-sm flex flex-col min-h-[600px]"
+  >
+    <!-- State 1: Current Order View -->
+    @if (activeTab === 'current') {
+      <div
+        class="flex-grow flex items-center justify-center border-2 border-dashed border-[#4A3B32]/10 rounded-xl bg-[#FDFBF7]/50"
+      >
+        <div class="text-center">
+          <h3 class="text-xl font-bold text-[#2A211D]">Point of Sale Screen</h3>
+          <p class="text-sm text-[#4A3B32]/60 mt-2">Menu grid and cart will be rendered here.</p>
+        </div>
+      </div>
+    }
+
+    <!-- State 2: Order History View -->
+    @else {
+      <div
+        class="flex-grow flex items-center justify-center border-2 border-dashed border-[#4A3B32]/10 rounded-xl bg-[#FDFBF7]/50"
+      >
+        <div class="text-center">
+          <h3 class="text-xl font-bold text-[#2A211D]">Order History</h3>
+          <p class="text-sm text-[#4A3B32]/60 mt-2">
+            Table of past transactions will be rendered here.
+          </p>
+        </div>
+      </div>
+    }
+  </div>
+</div>
