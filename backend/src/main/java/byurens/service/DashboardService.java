@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import byurens.dto.DashboardResponse;
 import byurens.dto.HourlySalesResponse;
-import byurens.dto.PaymentStatResponse;
+import byurens.dto.StatDTO;
 import byurens.dto.TopItemResponse;
 import byurens.repository.OrderItemAddOnRepository;
 import byurens.repository.OrderRepository;
@@ -31,7 +31,7 @@ public class DashboardService {
         List<HourlySalesResponse> hourlySales = orderRepository.findHourlySales(startDay, endDay);
         List<TopItemResponse> topProducts = orderRepository.findTopProducts(startDay, endDay, PageRequest.of(0, 5));
         List<TopItemResponse> topAddOns = orderItemAddOnRepository.findTopAddOns(startDay, endDay, PageRequest.of(0, 5));
-        List<PaymentStatResponse> paymentStats = paymentRepository.findPaymentStats(startDay, endDay);
+        List<StatDTO> paymentStats = paymentRepository.findPaymentStats(startDay, endDay);
 
         BigDecimal totalRevenue = hourlySales.stream()
             .map(HourlySalesResponse::revenue)
@@ -46,6 +46,9 @@ public class DashboardService {
             topProducts,
             topAddOns,
             paymentStats,
+            null,
+            null,
+            null,
             totalRevenue,
             totalOrders
         );

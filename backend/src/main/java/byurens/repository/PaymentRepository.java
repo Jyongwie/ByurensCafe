@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import byurens.dto.PaymentStatResponse;
+import byurens.dto.StatDTO;
 import byurens.entities.Payment;
 import byurens.enums.PaymentStatus;
 
@@ -23,5 +23,5 @@ public interface PaymentRepository extends JpaRepository<Payment, UUID> {
         "WHERE p.createdAt >= :start AND p.createdAt <= :end AND p.status = 'PAID' " +
         "GROUP BY p.method"
     )
-    List<PaymentStatResponse> findPaymentStats(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+    List<StatDTO> findPaymentStats(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 }
