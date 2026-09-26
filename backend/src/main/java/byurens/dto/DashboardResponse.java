@@ -7,7 +7,10 @@ public record DashboardResponse(
     List<HourlySalesResponse> hourlySales,
     List<TopItemResponse> topProducts,
     List<TopItemResponse> topAddOns,
-    List<PaymentStatResponse> paymentStats,
+    List<StatDTO> paymentStats,
+    List<StatDTO> orderTypes,
+    List<StatDTO> loyaltyStats,
+    List<StatDTO> categorySales,
     BigDecimal totalDailyRevenue,
     Long totalDailyOrders
 ) {}
