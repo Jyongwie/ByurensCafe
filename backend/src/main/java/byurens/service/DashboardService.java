@@ -32,6 +32,9 @@ public class DashboardService {
         List<TopItemResponse> topProducts = orderRepository.findTopProducts(startDay, endDay, PageRequest.of(0, 5));
         List<TopItemResponse> topAddOns = orderItemAddOnRepository.findTopAddOns(startDay, endDay, PageRequest.of(0, 5));
         List<StatDTO> paymentStats = paymentRepository.findPaymentStats(startDay, endDay);
+        List<StatDTO> orderTypes = orderRepository.findOrderTypeStats(startDay, endDay);
+        List<StatDTO> loyaltyStats = orderRepository.findLoyaltyStats(startDay, endDay);
+        List<StatDTO> categorySales = orderRepository.findCategorySales(startDay, endDay);
 
         BigDecimal totalRevenue = hourlySales.stream()
             .map(HourlySalesResponse::revenue)
@@ -46,9 +49,9 @@ public class DashboardService {
             topProducts,
             topAddOns,
             paymentStats,
-            null,
-            null,
-            null,
+            orderTypes,
+            loyaltyStats,
+            categorySales,
             totalRevenue,
             totalOrders
         );
