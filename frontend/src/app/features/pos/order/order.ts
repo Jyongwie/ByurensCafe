@@ -153,4 +153,12 @@ export class Order implements OnInit {
       }
     })
   }
+
+  setCategory(cat: string) {
+    this.activeCategory = cat;
+  }
+
+  setTab(tab: OrderTab) {
+    this.activeTab = tab;
+  }
 }
