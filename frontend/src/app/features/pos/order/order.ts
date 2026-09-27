@@ -81,4 +81,45 @@ export class Order implements OnInit {
     this.customerName = "";
     this.cart = [];
   }
+
+  get cartTotal(): number {
+    return this.cart.reduce((t, item) => t + (item.price * item.quantity), 0);
+  }
+  getQuantity(itemId: number): number {
+    return this.cart.find(c => c.id === itemId)?.quantity || 0;
+  }
+
+  addToCart(menuItem: MenuItem, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
+    if (this.cartPhase !== "ACTIVE") {
+      return;
+    }
+
+    const existing = this.cart.find(c => c.id === menuItem.id);
+    if (existing) {
+      existing.quantity++;
+    } else {
+      this.cart.push({...menuItem, quantity: 1, addOns: []});
+    }
+  }
+
+  removeFromCart(itemId: number, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
+    const existingIndex = this.cart.findIndex(c => c.id === itemId);
+    if (existingIndex > -1) {
+      if (this.cart[existingIndex].quantity > 1) {
+        this.cart[existingIndex].quantity--;
+      } else {
+        this.cart.splice(existingIndex, 1);
+      }
+    }
+  }
+
+  removeAllOfItem(itemId: number) {
+    this.cart = this.cart.filter(c => c.id !== itemId)
+  }
 }
