@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
-import { OrderService, TableCafe } from '../../../core/services/order.service';
+import { OrderRequest, OrderService, TableCafe } from '../../../core/services/order.service';
 import { FormsModule } from '@angular/forms';
 
 type OrderTab = "current" | "history";
@@ -121,5 +121,36 @@ export class Order implements OnInit {
 
   removeAllOfItem(itemId: number) {
     this.cart = this.cart.filter(c => c.id !== itemId)
+  }
+
+  submitOrder() {
+    if (!this.selectedOrderType || this.cart.length === 0) {
+      return;
+    }
+    this.isSubmitting = true;
+
+    const payload: OrderRequest = {
+      orderType: this.selectedOrderType,
+      tableId: this.selectedTable?.id || null,
+      customerId: null,
+      items: this.cart.map(item => ({
+        variantId: item.variantId,
+        quantity: item.quantity,
+        note: item.note || "",
+        addOnsId: item.addOns
+      }))
+    };
+
+    this.orderService.submitOrder(payload).subscribe({
+      next: (res) => {
+        alert("Order sent to kitchen");
+        this.cancelOrder();
+        this.isSubmitting = false;
+      },
+      error: (err) => {
+        console.error("Order failed: ", err);
+        this.isSubmitting = false;
+      }
+    })
   }
 }
