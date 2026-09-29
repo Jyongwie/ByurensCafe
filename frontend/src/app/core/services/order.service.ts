@@ -1,13 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { Observable } from "rxjs";
-
-export interface TableCafe {
-    id: string;
-    tableIdentifier: string;
-    capacity: number;
-    status: "AVAILABLE" | "OCCUPIED" | "RESERVED";
-}
+import { TableCafe } from "../../models/venue.model";
 
 export interface OrderItemRequest {
     variantId: string;
