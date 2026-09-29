@@ -2,9 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
-import { DashboardResponse, DashboardService } from '../../../core/services/dashboard.service';
+import { DashboardService } from '../../../core/services/dashboard.service';
 import { ChartConfiguration, ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
+import { DashboardResponse } from '../../../models/dashboard.model';
 
 @Component({
   selector: 'app-dashboard',
