@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
-import { OrderRequest, OrderService, TableCafe } from '../../../core/services/order.service';
+import { OrderRequest, OrderService } from '../../../core/services/order.service';
 import { FormsModule } from '@angular/forms';
+import { VenueService } from '../../../core/services/venue.service';
+import { TableCafe } from '../../../models/venue.model';
 
 type OrderTab = "current" | "history";
 type CartPhase = "INIT" | "ACTIVE";
@@ -17,7 +19,8 @@ interface CartItem extends MenuItem {quantity: number; note?: string; addOns: st
   styleUrl: './order.css',
 })
 export class Order implements OnInit {
-  private orderService = inject(OrderService)
+  private orderService = inject(OrderService);
+  private venueService = inject(VenueService);
 
   activeTab: OrderTab = "current";
   cartPhase: CartPhase = "INIT";
@@ -40,7 +43,7 @@ export class Order implements OnInit {
   ];
 
   ngOnInit(): void {
-    this.orderService.getTables().subscribe({
+    this.venueService.getTables().subscribe({
       next: (data) => this.tables = data,
       error: () => {
         // fallback dummy data
