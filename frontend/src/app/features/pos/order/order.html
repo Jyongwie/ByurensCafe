@@ -9,10 +9,8 @@
       "
     >
       Current Order
-      @if (activeTab === "current") {
-        <div
-          class="absolute bottom-0 left-0 w-full h-[3px] bg-[#4A3B32] rounded-t-md"
-        ></div>
+      @if (activeTab === 'current') {
+        <div class="absolute bottom-0 left-0 w-full h-[3px] bg-[#4A3B32] rounded-t-md"></div>
       }
     </button>
     <button
@@ -23,10 +21,8 @@
       "
     >
       Order History
-      @if (activeTab === "history") {
-        <div
-          class="absolute bottom-0 left-0 w-full h-[3px] bg-[#4A3B32] rounded-t-md"
-        ></div>
+      @if (activeTab === 'history') {
+        <div class="absolute bottom-0 left-0 w-full h-[3px] bg-[#4A3B32] rounded-t-md"></div>
       }
     </button>
   </div>
@@ -45,30 +41,43 @@
         >
           <!-- Category Filter Pills -->
           <div class="flex gap-2 overflow-x-auto pb-2 shrink-0">
-            @for (cat of categories; track cat) {
+            <!-- Static 'All' Button -->
+            <button
+              (click)="setCategory('All')"
+              class="px-6 py-2 rounded-full text-sm font-semibold transition-all border"
+              [ngClass]="
+                activeCategory === 'All'
+                  ? 'bg-[#4A3B32] text-white border-[#4A3B32]'
+                  : 'bg-white text-[#4A3B32] border-[#4A3B32]/20 hover:border-[#4A3B32]'
+              "
+            >
+              All
+            </button>
+            <!-- Dynamic Category Buttons from Backend -->
+            @for (cat of categories; track cat.id) {
               <button
-                (click)="setCategory(cat)"
+                (click)="setCategory(cat.label)"
                 class="px-6 py-2 rounded-full text-sm font-semibold transition-all border"
                 [ngClass]="
-                  activeCategory === cat
+                  activeCategory === cat.label
                     ? 'bg-[#4A3B32] text-white border-[#4A3B32]'
                     : 'bg-white text-[#4A3B32] border-[#4A3B32]/20 hover:border-[#4A3B32]'
                 "
               >
-                {{ cat }}
+                {{ cat.label }}
               </button>
             }
           </div>
 
-          <!-- Product Grid -->
+          <!-- 2. Product Grid -->
           <div
             class="grid grid-cols-2 xl:grid-cols-3 gap-4 overflow-y-auto pr-2 pb-20 content-start"
           >
-            @for (item of menuItems; track item.id) {
+            @for (item of filteredMenuItems; track item.variantId) {
               <div
                 class="bg-white rounded-2xl border transition-all flex flex-col overflow-hidden shadow-sm hover:shadow-md min-h-[140px]"
                 [ngClass]="
-                  getQuantity(item.id) > 0
+                  getQuantity(item.variantId) > 0
                     ? 'border-[#4A3B32]/40'
                     : 'border-[#4A3B32]/10 hover:border-[#4A3B32]/30'
                 "
@@ -83,17 +92,19 @@
                   >
                 </div>
 
-                @if (getQuantity(item.id) > 0) {
+                @if (getQuantity(item.variantId) > 0) {
                   <div
                     class="bg-[#FDFBF7] border-t border-[#4A3B32]/10 p-2 flex items-center justify-between mt-auto"
                   >
                     <button
-                      (click)="removeFromCart(item.id, $event)"
+                      (click)="removeFromCart(item.variantId, $event)"
                       class="w-10 h-10 flex items-center justify-center rounded-lg bg-white shadow-sm border border-[#4A3B32]/10 text-[#4A3B32] hover:bg-gray-50 font-bold text-lg"
                     >
                       -
                     </button>
-                    <span class="font-bold text-[#2A211D] text-lg">{{ getQuantity(item.id) }}</span>
+                    <span class="font-bold text-[#2A211D] text-lg">{{
+                      getQuantity(item.variantId)
+                    }}</span>
                     <button
                       (click)="addToCart(item, $event)"
                       class="w-10 h-10 flex items-center justify-center rounded-lg bg-[#4A3B32] shadow-sm text-white hover:bg-[#2A211D] font-bold text-lg"
@@ -252,18 +263,16 @@
                 </div>
               }
 
-              @for (item of cart; track item.id) {
+              @for (item of cart; track item.variantId) {
                 <div
                   class="flex justify-between items-center gap-4 group py-2 border-b border-[#4A3B32]/5 last:border-0"
                 >
-                  <!-- Enlarged Quantity Badge -->
                   <div
                     class="bg-[#4A3B32]/10 text-[#4A3B32] font-bold px-3 py-2 rounded-lg text-sm shrink-0"
                   >
                     {{ item.quantity }}x
                   </div>
 
-                  <!-- Enlarged Text -->
                   <div class="flex-1">
                     <h4 class="font-bold text-[#2A211D] text-base leading-tight">
                       {{ item.name }}
@@ -273,12 +282,11 @@
                     </p>
                   </div>
 
-                  <!-- Enlarged Remove Button -->
                   <button
-                    (click)="removeAllOfItem(item.id)"
+                    (click)="removeAllOfItem(item.variantId)"
                     class="text-[#4A3B32]/30 hover:text-red-500 transition-colors p-2 shrink-0"
-                    title="Remove item"
                   >
+                    <!-- SVG Icon here -->
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       class="h-5 w-5"
