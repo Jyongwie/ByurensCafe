@@ -1,15 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
-import { OrderRequest, OrderService } from '../../../core/services/order.service';
+import { OrderService } from '../../../core/services/order.service';
 import { FormsModule } from '@angular/forms';
 import { VenueService } from '../../../core/services/venue.service';
 import { TableCafe } from '../../../models/venue.model';
+import { OrderRequest } from '../../../models/order.model';
+import { CategoryResponse } from '../../../models/product.model';
+import { ProductService } from '../../../core/services/product.service';
 
 type OrderTab = "current" | "history";
 type CartPhase = "INIT" | "ACTIVE";
 type OrderType = "DINE_IN" | "TAKEAWAY";
 
-interface MenuItem {id: number; variantId: string; name: string; price: number; category: string;}
+interface MenuItem {id: string; variantId: string; name: string; price: number; categoryLabel: string;}
 interface CartItem extends MenuItem {quantity: number; note?: string; addOns: string[];}
 
 @Component({
@@ -21,11 +24,15 @@ interface CartItem extends MenuItem {quantity: number; note?: string; addOns: st
 export class Order implements OnInit {
   private orderService = inject(OrderService);
   private venueService = inject(VenueService);
+  private productService = inject(ProductService);
 
   activeTab: OrderTab = "current";
   cartPhase: CartPhase = "INIT";
-  categories = ["All", "Espresso", "Non-Coffee", "Pastry"];
+  categories: CategoryResponse[] = []
   activeCategory = "All";
+
+  menuItems: MenuItem[] = [];
+  filteredMenuItems: MenuItem[] = []
 
   selectedOrderType: OrderType | null = null;
   tables: TableCafe[] = [];
@@ -35,25 +42,39 @@ export class Order implements OnInit {
   cart: CartItem[] = [];
   isSubmitting = false;
 
-// Dummy Menu Data
-  menuItems: MenuItem[] = [
-    { id: 1, variantId: '1111-2222-3333-4444', name: 'Iced Caramel Macchiato', price: 35000, category: 'Espresso' },
-    { id: 2, variantId: '5555-6666-7777-8888', name: 'Cafe Latte', price: 30000, category: 'Espresso' },
-    { id: 3, variantId: '9999-0000-1111-2222', name: 'Butter Croissant', price: 25000, category: 'Pastry' }
-  ];
-
   ngOnInit(): void {
-    this.venueService.getTables().subscribe({
-      next: (data) => this.tables = data,
-      error: () => {
-        // fallback dummy data
-        this.tables = [
-          { id: 't1', tableIdentifier: '01', capacity: 2, status: 'AVAILABLE' },
-          { id: 't2', tableIdentifier: '02', capacity: 4, status: 'OCCUPIED' },
-          { id: 't3', tableIdentifier: '03', capacity: 2, status: 'AVAILABLE' },
-        ];
-      }
-    });
+    this.venueService.getTables().subscribe(data => this.tables = data);
+
+    this.productService.getCategories().subscribe(data => this.categories = data);
+
+    this.productService.getProducts().subscribe(products => {
+      this.menuItems = [];
+      products.forEach(p => {
+        p.variants.forEach(v => {
+          this.menuItems.push({
+            id: p.id,
+            variantId: v.id,
+            name: p.variants.length > 1 ? `${p.name} (${v.size})` : p.name,
+            price: v.price,
+            categoryLabel: p.category.label
+          })
+        })
+      })
+      this.filterMenu();
+    })
+  }
+
+  setCategory(cat: string) {
+    this.activeCategory = cat;
+    this.filterMenu();
+  }
+
+  filterMenu() {
+    if (this.activeCategory === "All") {
+      this.filteredMenuItems = [...this.menuItems];
+    } else {
+      this.filteredMenuItems = this.menuItems.filter(item => item.categoryLabel === this.activeCategory);
+    }
   }
 
   selectOrderType(type: OrderType) {
@@ -88,8 +109,8 @@ export class Order implements OnInit {
   get cartTotal(): number {
     return this.cart.reduce((t, item) => t + (item.price * item.quantity), 0);
   }
-  getQuantity(itemId: number): number {
-    return this.cart.find(c => c.id === itemId)?.quantity || 0;
+  getQuantity(variantId: string): number {
+    return this.cart.find(c => c.variantId === variantId)?.quantity || 0;
   }
 
   addToCart(menuItem: MenuItem, event?: Event) {
@@ -100,7 +121,7 @@ export class Order implements OnInit {
       return;
     }
 
-    const existing = this.cart.find(c => c.id === menuItem.id);
+    const existing = this.cart.find(c => c.variantId === menuItem.variantId);
     if (existing) {
       existing.quantity++;
     } else {
@@ -108,11 +129,11 @@ export class Order implements OnInit {
     }
   }
 
-  removeFromCart(itemId: number, event?: Event) {
+  removeFromCart(variantId: string, event?: Event) {
     if (event) {
       event.stopPropagation();
     }
-    const existingIndex = this.cart.findIndex(c => c.id === itemId);
+    const existingIndex = this.cart.findIndex(c => c.variantId === variantId);
     if (existingIndex > -1) {
       if (this.cart[existingIndex].quantity > 1) {
         this.cart[existingIndex].quantity--;
@@ -122,8 +143,8 @@ export class Order implements OnInit {
     }
   }
 
-  removeAllOfItem(itemId: number) {
-    this.cart = this.cart.filter(c => c.id !== itemId)
+  removeAllOfItem(variantId: string) {
+    this.cart = this.cart.filter(c => c.variantId !== variantId)
   }
 
   submitOrder() {
@@ -155,10 +176,6 @@ export class Order implements OnInit {
         this.isSubmitting = false;
       }
     })
-  }
-
-  setCategory(cat: string) {
-    this.activeCategory = cat;
   }
 
   setTab(tab: OrderTab) {
