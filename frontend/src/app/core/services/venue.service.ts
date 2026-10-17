@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { inject } from "@angular/core";
 import { Observable } from "rxjs";
-import { TableCafe } from "../../models/venue.model";
+import { TableCafe, TableCafeRequest } from "../../models/venue.model";
 
 export class VenueService {
     private http = inject(HttpClient);
@@ -9,5 +9,13 @@ export class VenueService {
 
     getTables(): Observable<TableCafe[]> {
         return this.http.get<TableCafe[]>(`${this.apiUrl}/tables`);
+    }
+
+    createTable(request: TableCafeRequest): Observable<TableCafe> {
+        return this.http.post<TableCafe>(this.apiUrl, request);
+    }
+
+    updateTable(id: string, request: TableCafeRequest): Observable<TableCafe> {
+        return this.http.put<TableCafe>(`${this.apiUrl}/${id}`, request);
     }
 }
