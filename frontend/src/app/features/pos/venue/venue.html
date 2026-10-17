@@ -1,1 +1,107 @@
-<p>venue works!</p>
+<div class="h-full flex flex-col bg-[#FDFBF7] animate-fade-in p-8 overflow-y-auto">
+  
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-8">
+    <div>
+      <h2 class="text-3xl font-bold text-[#2A211D]">Venue Setup</h2>
+      <p class="text-[#4A3B32]/60 mt-1">Manage cafe floor plan and table capacities</p>
+    </div>
+    <button (click)="openAddModal()" 
+            class="bg-[#4A3B32] text-white px-6 py-3 rounded-xl font-bold hover:bg-[#2A211D] transition-all shadow-md active:scale-95 flex items-center gap-2">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+      </svg>
+      Add Table
+    </button>
+  </div>
+
+  <!-- Venue Grid -->
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 content-start">
+    @for (table of tables; track table.id) {
+      <div (click)="openEditModal(table)"
+           class="bg-white rounded-2xl p-6 border-2 transition-all cursor-pointer flex flex-col items-center text-center shadow-sm hover:shadow-md hover:-translate-y-1"
+           [ngClass]="{
+             'border-emerald-500/30 hover:border-emerald-500': table.status === 'AVAILABLE',
+             'border-red-500/30 hover:border-red-500': table.status === 'OCCUPIED',
+             'border-amber-500/30 hover:border-amber-500': table.status === 'RESERVED'
+           }">
+        
+        <h3 class="text-3xl font-bold text-[#2A211D] mb-1">{{ table.tableIdentifier }}</h3>
+        <p class="text-sm font-semibold text-[#A98467] mb-4">Capacity: {{ table.capacity }}</p>
+        
+        <!-- Status Badge -->
+        <span class="px-3 py-1 rounded-full text-xs font-bold w-full uppercase tracking-wider"
+              [ngClass]="{
+                'bg-emerald-100 text-emerald-700': table.status === 'AVAILABLE',
+                'bg-red-100 text-red-700': table.status === 'OCCUPIED',
+                'bg-amber-100 text-amber-700': table.status === 'RESERVED'
+              }">
+          {{ table.status }}
+        </span>
+      </div>
+    }
+  </div>
+
+  <!-- Modal Overlay -->
+  @if (isModalOpen) {
+    <div class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
+      <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col">
+        
+        <!-- Modal Header -->
+        <div class="p-6 border-b border-[#4A3B32]/10 flex justify-between items-center bg-[#FDFBF7]">
+          <h3 class="text-xl font-bold text-[#2A211D]">{{ isEditing ? 'Edit Table' : 'Add New Table' }}</h3>
+          <button (click)="closeModal()" class="text-[#4A3B32]/40 hover:text-[#4A3B32] transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="p-6 space-y-5">
+          @if (errorMessage) {
+            <div class="bg-red-50 text-red-600 text-sm font-semibold p-3 rounded-lg border border-red-100">
+              {{ errorMessage }}
+            </div>
+          }
+
+          <div>
+            <label class="block text-sm font-bold text-[#4A3B32] mb-2">Table Identifier</label>
+            <input type="text" [(ngModel)]="formData.tableIdentifier" placeholder="e.g. T-01, VIP-A"
+                   class="w-full bg-white border border-[#4A3B32]/20 rounded-xl px-4 py-3 text-[#2A211D] focus:outline-none focus:border-[#4A3B32] focus:ring-1 focus:ring-[#4A3B32]">
+          </div>
+
+          <div>
+            <label class="block text-sm font-bold text-[#4A3B32] mb-2">Seating Capacity</label>
+            <input type="number" min="1" [(ngModel)]="formData.capacity"
+                   class="w-full bg-white border border-[#4A3B32]/20 rounded-xl px-4 py-3 text-[#2A211D] focus:outline-none focus:border-[#4A3B32] focus:ring-1 focus:ring-[#4A3B32]">
+          </div>
+
+          @if (isEditing) {
+            <div>
+              <label class="block text-sm font-bold text-[#4A3B32] mb-2">Status</label>
+              <select [(ngModel)]="formData.status"
+                      class="w-full bg-white border border-[#4A3B32]/20 rounded-xl px-4 py-3 text-[#2A211D] focus:outline-none focus:border-[#4A3B32] focus:ring-1 focus:ring-[#4A3B32]">
+                <option value="AVAILABLE">Available</option>
+                <option value="OCCUPIED">Occupied</option>
+                <option value="RESERVED">Reserved</option>
+              </select>
+            </div>
+          }
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="p-6 bg-[#FDFBF7] border-t border-[#4A3B32]/10 flex justify-end gap-3">
+          <button (click)="closeModal()" class="px-6 py-3 rounded-xl font-bold text-[#4A3B32] hover:bg-[#4A3B32]/5 transition-colors">
+            Cancel
+          </button>
+          <button (click)="saveTable()" [disabled]="isSubmitting || !formData.tableIdentifier || formData.capacity < 1"
+                  class="bg-[#4A3B32] text-white px-8 py-3 rounded-xl font-bold hover:bg-[#2A211D] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+            {{ isSubmitting ? 'Saving...' : 'Save Table' }}
+          </button>
+        </div>
+
+      </div>
+    </div>
+  }
+</div>
