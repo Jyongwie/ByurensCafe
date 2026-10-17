@@ -4,3 +4,9 @@ export interface TableCafe {
     capacity: number;
     status: "AVAILABLE" | "OCCUPIED" | "RESERVED";
 }
+
+export interface TableCafeRequest {
+    tableIdentifier: string;
+    capacity: number;
+    status?: "AVAILABLE" | "OCCUPIED" | "RESERVED";
+}
