@@ -42,7 +42,7 @@ public class PaymentService {
     private final OrderRepository orderRepository;
     private final ObjectMapper objectMapper;
 
-    private final WebClient webClient = WebClient.builder().build();
+    private final WebClient.Builder webClient;
 
     @Value("${payment.gateway.webhook-secret}")
     private String webhookSecret;
@@ -121,7 +121,7 @@ public class PaymentService {
 
         payload.put("transaction_details", transactionDetails);
 
-        JsonNode response = webClient.post()
+        JsonNode response = webClient.build().post()
             .uri("https://api.sandbox.midtrans.com/v2/charge")
             .header(HttpHeaders.AUTHORIZATION, "server_key")
             .contentType(MediaType.APPLICATION_JSON)
