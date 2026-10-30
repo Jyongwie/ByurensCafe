@@ -35,6 +35,32 @@ public class ProductService {
             .isAvailable(request.isAvailable())
             .build();
 
+        if (request.variants() != null) {
+            request.variants().forEach(variant -> {
+                ProductVariant newVariant = ProductVariant.builder()
+                    .product(product)
+                    .size(variant.size())
+                    .price(variant.price())
+                    .onSale(variant.onSale())
+                    .onSalePercent(variant.onSalePercent())
+                    .capital(variant.capital())
+                    .isPromo(variant.isPromo())
+                    .build();
+                product.getVariants().add(newVariant);
+            });
+        }
+
+        if (request.addOnGroups() != null) {
+            request.addOnGroups().forEach(group -> {
+                AddOnGroup newGroup = AddOnGroup.builder()
+                    .name(group.name())
+                    .minSelection(group.minSelection())
+                    .maxSelection(group.maxSelection())
+                    .build(); 
+                product.getAddOnGroups().add(newGroup);
+            });
+        }
+
         Product savedProduct = productRepository.save(product);
 
         return mapToResponse(savedProduct);
