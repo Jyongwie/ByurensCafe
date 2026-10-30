@@ -19,6 +19,8 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,6 +29,8 @@ import lombok.Setter;
 @Table(name = "Categories")
 @Getter
 @Setter
+@Builder 
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Category {
     @Id
@@ -45,6 +49,7 @@ public class Category {
     @Column(nullable = false, name = "task_target")
     private TaskTarget taskTarget;
     
+    @Builder.Default
     @OneToMany(mappedBy = "category")
     @JsonManagedReference
     private List<Product> products = new ArrayList<>();
